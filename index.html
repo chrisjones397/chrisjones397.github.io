@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+  <link rel="manifest" href="favicon/site.webmanifest">
+  <title>Christopher Jones - Design from Tutorial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <link rel="preload" href="med/forest-fall.mp4" as="video">
+<style>
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+:root {
+  --highlight-color: rgb(200,200,200);
+  --primary-color: rgb(100,100,100);
+  --secondary-color: rgb(100,100,200);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+@media screen and (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  font-family: "Inter", sans-serif;
+  background-color: rgb(100, 100, 100);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center center;
+}
+
+/* Header - Nav */
+ul {
+  list-style: none; 
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.header {
+  background-color: rgba(255,255,255,0.4);
+  backdrop-filter: saturate(140%) blur(10px);
+  -webkit-backdrop-filter: saturate(140%) blur(10px);
+  border-bottom: 1px  rgba(255, 255, 255, 0.4) solid;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+}
+.header-block {
+  min-height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 120px;
+}
+
+@media(max-width: 720px) {
+  .header-block {
+    flex-direction: column;
+    padding: 30px 0;
+    row-gap: 20px;
+  }
+}
+
+.logo-img {
+  display: block;
+  max-height: 32px;
+}
+.nav-list {
+  display: flex;
+  column-gap: 20px;
+}
+.nav-link {
+  font-size: 16px;
+  color: rgba(255,255,255,0.6);
+  transition: 0.4s;
+}
+.nav-link:hover,
+.nav-link:focus {
+  color: rgba(255,255,255,1);
+}
+
+section {
+  height: 600vh;
+  position: relative;
+}
+
+.vid-block {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+}
+.vid-block video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#intro .vid-block { background: rgba(255, 0, 0, 0.4); }
+#gallery .vid-block { background: rgba(0, 255, 0, 0.4); }
+#contact .vid-block { background: rgba(0, 0, 255, 0.4); }
+
+.intro__story {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  color: white;
+}
+
+.story-block {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 10%;
+}
+
+.story-inner {
+  max-width: 60ch;
+  opacity: 0;
+  transition: opacity 0.3s linear;
+}
+
+.story-inner h1 {
+  font-size: 2.5em;
+  margin-bottom: 0.8em;
+}
+
+.story-inner p {
+  font-size: 1.2em;
+  line-height: 1.6;
+  margin: 0;
+}
+</style>
+</head>
+<body>
+
+<header id="header" class="header">
+  <div class="header-block">
+    <a href="#" class="nav-link"><img src="med/christopher-jones-logo-inter-100.svg" alt="logo" class="logo-img" /></a>
+    <nav class="nav">
+      <ul class="nav-list">
+        <li><a href="#intro" class="nav-link">Abstract</a></li>
+        <li><a href="#gallery" class="nav-link">Figurative</a></li>
+        <li><a href="#contact" class="nav-link">Landscape</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- INTRO -->
+<section id="intro">
+  <div class="vid-block">
+    <video preload="auto" muted playsinline>
+      <source src="med/forest-fall.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="intro__story">
+    <div class="story-block"><div class="story-inner"><h1>Intro 1</h1><p>First intro block.</p></div></div>
+    <div class="story-block"><div class="story-inner"><h1>Intro 2</h1><p>Second intro block.</p></div></div>
+    <div class="story-block"><div class="story-inner"><h1>Intro 3</h1><p>Third intro block.</p></div></div>
+    <div class="story-block"><div class="story-inner"><h1>Intro 4</h1><p>Fourth intro block.</p></div></div>
+    <div class="story-block"><div class="story-inner"><h1>Intro 5</h1><p>Fifth intro block.</p></div></div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="vid-block">
+    <video preload="auto" muted playsinline>
+      <source src="med/forest-fall.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="intro__story">
+    <div class="story-block"><div class="story-inner"><h1>Gallery 1</h1><p>First gallery block.</p></div></div>
+    <div class="story-block"><div class="story-inner"><h1>Gallery 2</h1><p>Second gallery block.</p></div></div>
+    <div class="story-block"><div class="story-inner"><h1>Gallery 3</h1><p>Third gallery block.</p></div></div>
+    <div class="story-block"><div class="story-inner"><h1>Gallery 4</h1><p>Fourth gallery block.</p></div></div>
+    <div class="story-block"><div class="story-inner"><h1>Gallery 5</h1><p>Fifth gallery block.</p></div></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="vid-block">
+    <video preload="auto" muted playsinline>
+      <source src="med/forest-fall.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="intro__story">
+    <div class="story-block"><div class="story-inner"><h1>Contact 1</h1><p>First contact block.</p></div></div>
+    <div class="story-block"><div class="story-inner"><h1>Contact 2</h1><p>Second contact block.</p></div></div>
+    <div class="story-block"><div class="story-inner"><h1>Contact 3</h1><p>Third contact block.</p></div></div>
+    <div class="story-block"><div class="story-inner"><h1>Contact 4</h1><p>Fourth contact block.</p></div></div>
+    <div class="story-block"><div class="story-inner"><h1>Contact 5</h1><p>Fifth contact block.</p></div></div>
+  </div>
+</section>
+
+<script>
+const MAX_OPACITY = 0.75;
+const SCRUB_DAMPING = 0.1;
+
+// NEW: Parameterised scrubbing FPS (change this value to adjust CPU load)
+const SCRUB_FPS = 24; // Match your video or tweak (e.g., 15, 24, 30)
+const SCRUB_INTERVAL = 1000 / SCRUB_FPS;
+
+const active = new Set();
+
+// Fade Observer
+const io = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    const block = entry.target;
+    const inner = block.querySelector('.story-inner');
+    if (!inner) return;
+    if (entry.isIntersecting) {
+      active.add(block);
+    } else {
+      inner.style.opacity = '0';
+      active.delete(block);
+    }
+  });
+}, { rootMargin: '30% 0px 30% 0px', threshold: 0 });
+
+document.querySelectorAll('.story-block').forEach(b => io.observe(b));
+
+function updateOpacity() {
+  const vh = window.innerHeight;
+  const topBand = 0.20 * vh;
+  const bottomBand = 0.80 * vh;
+
+  active.forEach(block => {
+    const inner = block.querySelector('.story-inner');
+    if (!inner) return;
+
+    const rect = inner.getBoundingClientRect();
+    const top = rect.top;
+    const bottom = rect.bottom;
+    let opacity = 0;
+
+    if (bottom <= 0 || top >= vh) {
+      opacity = 0;
+    } else {
+      if (bottom > bottomBand) {
+        const progressIn = Math.min(Math.max((vh - bottom) / (vh - bottomBand), 0), 1);
+        opacity = MAX_OPACITY * progressIn;
+      } else if (top < topBand) {
+        const progressOut = Math.min(Math.max(top / topBand, 0), 1);
+        opacity = MAX_OPACITY * progressOut;
+      } else {
+        opacity = MAX_OPACITY;
+      }
+    }
+    inner.style.opacity = opacity.toFixed(3);
+  });
+}
+
+// Smooth scrubbing with FPS throttling
+const scrubTargets = new Map();
+const sections = document.querySelectorAll('section');
+let lastScrubUpdate = 0;
+
+function updateScrubTargets() {
+  const scrollY = window.scrollY;
+  const vh = window.innerHeight;
+
+  sections.forEach(section => {
+    const video = section.querySelector('.vid-block video');
+    if (!video || !video.duration) return;
+
+    const rect = section.getBoundingClientRect();
+    const sectionTop = rect.top + scrollY;
+    const sectionHeight = section.offsetHeight;
+    const start = sectionTop;
+    const end = sectionTop + sectionHeight - vh;
+
+    const progress = Math.min(Math.max((scrollY - start) / (end - start), 0), 1);
+    scrubTargets.set(video, video.duration * progress);
+  });
+}
+
+let scrubActive = false;
+let scrollStopTimeout;
+
+function smoothScrub(timestamp) {
+  if (timestamp - lastScrubUpdate >= SCRUB_INTERVAL) {
+    scrubTargets.forEach((target, video) => {
+      if (!video.duration) return;
+      const diff = target - video.currentTime;
+      if (Math.abs(diff) > 0.01) {
+        video.currentTime += diff * SCRUB_DAMPING;
+      }
+    });
+    lastScrubUpdate = timestamp;
+  }
+  if (scrubActive) requestAnimationFrame(smoothScrub);
+}
+
+let ticking = false;
+window.addEventListener('scroll', () => {
+  if (!ticking) {
+    requestAnimationFrame(() => {
+      updateOpacity();
+      updateScrubTargets();
+      ticking = false;
+    });
+    ticking = true;
+  }
+
+  if (!scrubActive) {
+    scrubActive = true;
+    requestAnimationFrame(smoothScrub);
+  }
+  clearTimeout(scrollStopTimeout);
+  scrollStopTimeout = setTimeout(() => {
+    scrubActive = false;
+  }, 150);
+});
+
+window.addEventListener('resize', () => {
+  updateOpacity();
+  updateScrubTargets();
+});
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    updateOpacity();
+    updateScrubTargets();
+  }, 800);
+});
+</script>
+</body>
+</html>
+
