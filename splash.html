@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Four Panels Animation — D=600, 3 oscillations, x^6 split</title>
+<style>
+  :root{
+    /* Master durations (per-step). Keep D at 600 unless told otherwise. */
+    --fade-duration: 600ms;                 /* Steps 1–3 fades */
+    --fade-ease: cubic-bezier(.4,0,.6,1);
+
+    --slide-duration: 600ms;                /* Step 7 (horizontal) */
+    --vertical-duration: 600ms;             /* Step 8 (vertical)   */
+    --split-duration: 600ms;                /* Step 10 split       */
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html, body { height:100%; background: rgb(100,100,100); color:#fff; }
+
+  .container{
+    display:grid;
+    grid-template-columns:50% 50%;
+    grid-template-rows:50% 50%;
+    width:100%;
+    height:100%;
+    overflow:hidden; /* contains the final split */
+  }
+
+  .panel{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    background: rgb(200,200,200);     /* lighter grey panels */
+    overflow: visible;                 /* allow text to leak until step 9 */
+    /* Do NOT transform panels until step 10 (avoid stacking-context traps) */
+  }
+
+  /* Explicit panel z-order (opaque backgrounds) */
+  .upper-left  { z-index: 4; align-items:flex-end;   justify-content:flex-end; }
+  .upper-right { z-index: 1; align-items:flex-end;   justify-content:flex-start; }
+  .lower-left  { z-index: 2; align-items:flex-start; justify-content:flex-end; }
+  .lower-right { z-index: 3; align-items:flex-start; justify-content:flex-start; }
+
+  /* Text: ALL motion & opacity target ONLY <p> */
+  .panel p{
+    color:#fff;                               /* white text */
+    transform: translate(var(--tx, 0px), var(--ty, 0px));
+    transition: opacity var(--fade-duration) var(--fade-ease);
+    will-change: transform, opacity;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 2em;
+    opacity: 1;
+  }
+
+  /* Out-of-flow, visible “fake loader” image at top-right */
+  .fake-loader {
+    position: fixed;
+    right: 16px;
+    top: 16px;
+    width: 180px;
+    height: 120px;
+    object-fit: contain;
+    border: 2px solid #fff;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.2);
+    z-index: 9999;          /* above all panels and text */
+    pointer-events: none;   /* purely visual */
+  }
+  .loader-badge {
+    position: fixed;
+    right: 16px;
+    top: 144px;
+    padding: 4px 8px;
+    font: 12px/1.2 system-ui, sans-serif;
+    color: #fff;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid #fff;
+    border-radius: 6px;
+    z-index: 9999;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="panel upper-left"><p>Chris</p></div>
+    <div class="panel upper-right"><p>topher</p></div>
+    <div class="panel lower-left"><p>Jones</p></div>
+    <div class="panel lower-right"><p>&hellip;</p></div>
+  </div>
+
+  <!-- Visible, out-of-flow fake image for simulated ready -->
+  <img class="fake-loader" alt="simulated-load (appears when 'loaded')" />
+  <div class="loader-badge" id="loaderBadge"></div>
+
+<script>
+/* ===================== Config ===================== */
+/* You may override before this script: window.SIMULATED_LOAD_MS = 3000 */
+window.SIMULATED_LOAD_MS = window.SIMULATED_LOAD_MS ?? 3000;
+
+const D = 600;                                   // master duration (ms)
+const START_DELAY = 500;                          // initial delay (ms)
+
+/* per-step durations (read from CSS so you can tweak in one place) */
+const SLIDE_DURATION    = msFromCSS('--slide-duration', D);
+const VERTICAL_DURATION = msFromCSS('--vertical-duration', D);
+const SPLIT_DURATION    = msFromCSS('--split-duration', D);
+
+/* Overshoot amplitudes (px), as before */
+const H_OVERSHOOT = 40; // horizontal (Step 7)
+const V_OVERSHOOT = 10; // vertical   (Step 8)
+
+/* Oscillation spec for Steps 7–8 */
+const OSCILLATIONS = 3;   // exactly 3 oscillations within D
+const DAMPING      = 3;   // per your request
+
+/* ===================== Elements ===================== */
+const ULp = document.querySelector('.upper-left p');
+const URp = document.querySelector('.upper-right p');
+const LLp = document.querySelector('.lower-left p');
+const LRp = document.querySelector('.lower-right p');
+
+const UL  = document.querySelector('.upper-left');
+const UR  = document.querySelector('.upper-right');
+const LL  = document.querySelector('.lower-left');
+const LR  = document.querySelector('.lower-right');
+
+const FAKE_IMG = document.querySelector('.fake-loader');
+const LOADER_BADGE = document.getElementById('loaderBadge');
+
+/* ===================== Utilities ===================== */
+const t0 = performance.now();
+const stamp = () => Math.round(performance.now() - t0) + 'ms';
+
+function logStepStart(n){ console.log(`Step ${n} START @ ${stamp()}`); }
+function logStepEnd(n){   console.log(`Step ${n} END   @ ${stamp()}`); }
+
+function msFromCSS(varName, fallback){
+  const v = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+  if(!v) return fallback;
+  if(v.endsWith('ms')) return parseFloat(v);
+  if(v.endsWith('s'))  return parseFloat(v)*1000;
+  const n = parseFloat(v);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function rectFmt(el){
+  const r = el.getBoundingClientRect();
+  return `x=${r.left.toFixed(1)} y=${r.top.toFixed(1)} w=${r.width.toFixed(1)} h=${r.height.toFixed(1)}`;
+}
+function logPPositions(tag = 'pos'){
+  console.log(`[${stamp()}] ${tag}: ULp{${rectFmt(ULp)}} URp{${rectFmt(URp)}} LLp{${rectFmt(LLp)}} LRp{${rectFmt(LRp)}}`);
+}
+function logPTransforms(label){
+  const g = (p) => ({
+    tx: getComputedStyle(p).getPropertyValue('--tx').trim() || '0px',
+    ty: getComputedStyle(p).getPropertyValue('--ty').trim() || '0px',
+    op: getComputedStyle(p).opacity
+  });
+  console.log(`[${stamp()}] ${label}`, { ULp: g(ULp), URp: g(URp), LLp: g(LLp), LRp: g(LRp) });
+}
+
+function setCSSVar(el, name, value){ el.style.setProperty(name, typeof value === 'number' ? `${value}px` : value); }
+
+/* Opacity transitions apply only to <p> */
+function setFade(pEl, toOpacity, animate=true){
+  if(!pEl || pEl.tagName !== 'P') return;
+  if(!animate){
+    const prev = pEl.style.transition;
+    pEl.style.transition = 'none';
+    pEl.style.opacity = toOpacity;
+    void pEl.offsetWidth;          // flush
+    pEl.style.transition = prev || '';
+  }else{
+    void pEl.offsetWidth;          // flush (ensure current style is committed)
+    pEl.style.opacity = toOpacity; // animate via CSS
+  }
+}
+
+/* Guaranteed fade-in when swapping text */
+function swapTextAndFadeIn(pEl, newText){
+  const prev = pEl.style.transition;
+  pEl.style.transition = 'none';
+  pEl.style.opacity = 0;     // start at 0 without transition
+  pEl.textContent = newText; // swap text
+  void pEl.offsetWidth;      // flush
+  pEl.style.transition = prev || '';
+  requestAnimationFrame(() => { pEl.style.opacity = 1; });
+}
+
+/* ========= Easing helpers ========= */
+const easeOutCubic  = (t) => 1 - Math.pow(1 - t, 3);
+
+/* Fast–slow–fast (easeInOut x^6), symmetric */
+function easeInOutPow(t, n=6){
+  return t < 0.5 ? 0.5 * Math.pow(2*t, n) : 1 - 0.5 * Math.pow(2*(1 - t), n);
+}
+
+/* ========= Multi-oscillation (piecewise) overshoot to target in total D =========
+   - Starts at `from`, ends exactly at `to`, no jump at t=0 or t=1.
+   - Creates `oscillations` alternating peaks around `to`, with exponentially
+     decaying amplitudes derived from DAMPING.
+   - First peak beyond target has magnitude ≈ overshootPx (exact in this model). */
+function animateMultiOvershootVar(el, varName, from, to, duration, overshootPx, oscillations=3, damping=DAMPING){
+  return new Promise(resolve => {
+    const dir = Math.sign(to - from) || 1;
+
+    // Decay per peak from damping (heuristic mapping): lambda ~ e^{-damping/oscillations}
+    const lambda = Math.exp(-damping / oscillations);
+
+    // Build waypoints: start -> (+A) -> (-Aλ) -> (+Aλ²) -> ... -> end
+    const points = [];
+    points.push(from);
+    let amp = overshootPx; // first overshoot magnitude
+    for(let k=0; k<oscillations; k++){
+      const sign = (k % 2 === 0) ? +1 : -1; // +, -, +, ...
+      points.push(to + sign * dir * amp);
+      amp *= lambda;
+    }
+    points.push(to);
+
+    const segments = points.length - 1;
+    const segDur = duration / segments;
+
+    function animateSegment(i){
+      const a = points[i];
+      const b = points[i+1];
+      const t0 = performance.now();
+      (function tick(){
+        const elapsed = performance.now() - t0;
+        const t = Math.min(elapsed / segDur, 1);
+        const v = a + (b - a) * easeOutCubic(t); // each segment ease-out (snappy then soften)
+        setCSSVar(el, varName, v);
+        if(t < 1){
+          requestAnimationFrame(tick);
+        }else{
+          if(i+1 < points.length - 1){
+            // Log peaks (when we hit the overshoot waypoints)
+            if(i > 0) console.log(`[${stamp()}] ${el.tagName.toLowerCase()} peak reached @ ${varName}=${Math.round(b)}px`);
+            animateSegment(i+1);
+          }else{
+            resolve();
+          }
+        }
+      })();
+    }
+    // Prime the starting value to avoid any jump
+    setCSSVar(el, varName, from);
+    animateSegment(0);
+  });
+}
+
+/* ========= Panel split with fast–slow–fast (easeInOut x^6), duration = D ========= */
+function animatePanelsSplitFSF(tops, bots, distance, duration){
+  return new Promise(resolve => {
+    const t0 = performance.now();
+    (function tick(){
+      const elapsed = Math.min(performance.now() - t0, duration);
+      const t = elapsed / duration;                    // 0..1
+      const pos = distance * easeInOutPow(t, 6);       // symmetric x^6
+      tops.forEach(el => { el.style.transform = `translateY(${-pos}px)`; });
+      bots.forEach(el => { el.style.transform = `translateY(${ pos}px)`; });
+      if(elapsed < duration) requestAnimationFrame(tick); else resolve();
+    })();
+  });
+}
+
+/* ========= Simulated “page ready” via visible image ========= */
+function simulatePageReady(ms){
+  console.log(`[${stamp()}] Simulated load: waiting ${ms}ms before assigning image src`);
+  LOADER_BADGE.textContent = `SIMULATED_LOAD_MS = ${ms}ms`;
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="180" height="120">
+        <rect width="180" height="120" fill="#6aa84f"/>
+        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+              font-family="sans-serif" font-size="16" fill="#fff">Loaded @ ${ms}ms</text>
+      </svg>`;
+      FAKE_IMG.onload = () => { console.log(`[${stamp()}] Simulated load completed (img onload)`); resolve(); };
+      FAKE_IMG.onerror = () => { console.warn(`[${stamp()}] Simulated load errored; continuing`); resolve(); };
+      FAKE_IMG.src = 'data:image/svg+xml;base64,' + btoa(svg);
+    }, ms);
+  });
+}
+
+/* Small helper */
+function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+/* ===================== Timeline ===================== */
+window.addEventListener('load', async () => {
+  // Step 1 — fade out UR ("topher")
+  await wait(START_DELAY); logStepStart(1);
+  setFade(URp, 0, true);
+  await wait(D); logStepEnd(1); logPPositions('after step 1');
+
+  // Step 2 — fade out LR ("…") starting half a D after step 1
+  await wait(D/2); logStepStart(2);
+  setFade(LRp, 0, true);
+  await wait(D); logStepEnd(2); logPPositions('after step 2');
+
+  // Step 3 — LR -> ".org.uk" and guaranteed fade-in
+  await wait(D/2); logStepStart(3);
+  swapTextAndFadeIn(LRp, '.org.uk');
+  await wait(D); logStepEnd(3); logPPositions('after step 3');
+
+  // Steps 4 & 5 — lock right edge while swapping to "Jones.org.uk"
+  await wait(D/2); logStepStart('4–5');
+  const edge = LRp.getBoundingClientRect().right;
+  LRp.textContent = 'Jones.org.uk';
+  const newEdge = LRp.getBoundingClientRect().right;
+  const shift = edge - newEdge;                // px to keep same right edge
+  setCSSVar(LRp, '--tx', shift);               // pre-align (no animation)
+  logStepEnd('4–5'); logPPositions('after step 4–5'); logPTransforms('tx pre-align');
+
+  // Step 6 — instantly hide LL ("Jones")
+  logStepStart(6); setFade(LLp, 0, false); logStepEnd(6);
+
+  // Step 7 — LR X from `shift` -> 0 with **3 oscillations** (H_OVERSHOOT=40px)
+  logStepStart(7);
+  await animateMultiOvershootVar(LRp, '--tx', shift, 0, SLIDE_DURATION, H_OVERSHOOT, OSCILLATIONS, DAMPING);
+  logStepEnd(7); logPTransforms('after step 7');
+
+  // Step 8 — UL down by ½h, LR up by ½h, **3 oscillations** (V_OVERSHOOT=10px), simultaneous
+  logStepStart(8);
+  const ULhalf = ULp.offsetHeight / 2;  // move down (positive)
+  const LRhalf = LRp.offsetHeight / 2;  // move up   (negative)
+  await Promise.all([
+    animateMultiOvershootVar(ULp, '--ty', 0,  ULhalf, VERTICAL_DURATION,  V_OVERSHOOT, OSCILLATIONS, DAMPING),
+    animateMultiOvershootVar(LRp, '--ty', 0, -LRhalf, VERTICAL_DURATION,  V_OVERSHOOT, OSCILLATIONS, DAMPING)
+  ]);
+  logStepEnd(8); logPTransforms('after step 8'); logPPositions('after step 8');
+
+  // Step 9 — instant prep for final split
+  logStepStart(9);
+  LLp.textContent = 'Chris';
+  URp.textContent = 'Jones.org.uk';
+  setCSSVar(LLp, '--ty', -LLp.offsetHeight/2);
+  setCSSVar(URp, '--ty',  URp.offsetHeight/2);
+  [ULp, URp, LLp, LRp].forEach(p => setFade(p, 1, false));
+  [UL, UR, LL, LR].forEach(panel => panel.style.overflow = 'hidden');
+  logStepEnd(9); logPTransforms('after step 9'); logPPositions('after step 9');
+
+  // Step 9.5 — min-wait (D) + simulated "ready"
+  logStepStart('9.5 (min-wait + ready event)');
+  await Promise.all([ wait(D), simulatePageReady(window.SIMULATED_LOAD_MS) ]);
+  logStepEnd('9.5 (min-wait + ready event)');
+
+  // Step 10 — vertical split with **fast–slow–fast x^6**, duration D
+  logStepStart(10);
+  const distance = Math.round(window.innerHeight / 2);
+  await animatePanelsSplitFSF([UL, UR], [LL, LR], distance, SPLIT_DURATION);
+  logStepEnd(10);
+  console.log(`All done @ ${stamp()}`);
+});
+</script>
+</body>
+</html>
