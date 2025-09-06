@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
@@ -11,353 +11,428 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-  <link rel="preload" href="med/forest-fall.mp4" as="video">
-<style>
-/* RESET */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-:root {
-  --highlight-color: rgb(200,200,200);
-  --primary-color: rgb(100,100,100);
-  --secondary-color: rgb(100,100,200);
-}
+  <link rel="preload" href="med/water.mp4" as="video">
+  <style>
+    /* Fundamentals */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    :root {
+      --highlight-color: rgb(200,200,200);
+      --primary-color: rgb(100,100,100);
+      --secondary-color: rgb(100,100,200);
+      /* This variable will be set by JavaScript */
+      --header-height: 180px; /* Fallback value for non-JS browsers or initial load */
+    }
+    
+    html {
+      scroll-behavior: smooth;
+      scrollbar-gutter: stable;
+    }
+    @media screen and (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+    }
+    body, html {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      font-family: "Inter", sans-serif;
+      background-color: rgb(100, 100, 100);
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center center;
+    }
+    /* Header */
+    ul {
+      list-style: none; 
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    .header {
+      background-color: rgba(255,255,255,0.4);
+      backdrop-filter: saturate(140%) blur(10px);
+      -webkit-backdrop-filter: saturate(140%) blur(10px);
+      border-bottom: 1px  rgba(255, 255, 255, 0.4) solid;
+      position: fixed;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+    }
+    .header-block {
+      min-height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 120px;
+    }
+    @media(max-width: 720px) {
+      .header-block {
+        flex-direction: column;
+        padding: 30px 0;
+        row-gap: 20px;
+      }
+    }
+    .logo-img {
+      display: block;
+      /* max-height: 32px; */
+    }
+    .nav-list {
+      display: flex;
+      column-gap: 20px;
+    }
+    .nav-link {
+      font-size: 16px;
+      color: rgba(255,255,255,0.6);
+      transition: 0.4s;
+    }
+    .nav-link object{
+      height: 6rem;
+    }
+    .nav-link:hover,
+    .nav-link:focus {
+      color: rgba(255,255,255,1);
+    }
+    /* Main Sections */
+    /* Update this to apply the margin-top to the main content wrapper */
+    main {
+      margin-top: var(--header-height);
+    }
+    section#gallery,section#water {
+      /* padding: 120px 0px 60px 0px; */
+      min-height: 100vh;
+    }
+    .gallery-block {
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 120px;
+    }
+    /* Water */
+    section#water {
+      height: 600vh;
+      position: relative;
+    }
+    /* Ensure the sticky container is in the normal flow and has a defined scroll-range */
+    .water-block {
+        position: sticky; /* Make the block stick to the viewport */
+        top: 0; /* The sticky effect activates when the top of the element reaches the top of the viewport */
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+        color: #fff;
+        overflow: hidden; /* This crops any part of the video that extends beyond the container */
+    }
+    .water-block video {
+      position: absolute; /* The video should be positioned absolutely within its container */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 0%;
+      z-index: -1; /* Place the video behind the overlay content */
+    }
+    /* Position the overlays absolutely within the sticky section */
+    .intro__story {
+        position: absolute; /* The overlays are positioned absolutely inside the sticky section */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%; /* Make the overlay container fill the entire sticky section */
+        color: white;
+        z-index: 1; /* Place the overlay content in front of the video */
+        pointer-events: none; /* Allow mouse events to pass through the overlay to the elements below (optional) */
+    }
 
-html {
-  scroll-behavior: smooth;
-}
-@media screen and (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-}
+    /* Position and style the individual story blocks within the overlay */
+    .story-block {
+        height: 100vh; /* Adjust height based on how long you want each block to be visible */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 0 10%;
+        pointer-events: auto; /* Re-enable pointer events for the content you want to interact with */
+    }
 
-body, html {
-  margin: 0;
-  padding: 0;
-  background: #000;
-  font-family: "Inter", sans-serif;
-  background-color: rgb(100, 100, 100);
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: center center;
-}
+    /* Ensure the inner text is visible */
+    .story-inner {
+        max-width: 60ch;
+        opacity: 0;
+        transition: opacity 0.3s linear;
+    }
+    .story-inner h1 {
+      font-size: 2.5em;
+      margin-bottom: 0.8em;
+    }
 
-/* Header - Nav */
-ul {
-  list-style: none; 
-}
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-.header {
-  background-color: rgba(255,255,255,0.4);
-  backdrop-filter: saturate(140%) blur(10px);
-  -webkit-backdrop-filter: saturate(140%) blur(10px);
-  border-bottom: 1px  rgba(255, 255, 255, 0.4) solid;
-  position: fixed;
-  top: 0;
-  z-index: 1000;
-  width: 100%;
-}
-.header-block {
-  min-height: 90px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 120px;
-}
-
-@media(max-width: 720px) {
-  .header-block {
-    flex-direction: column;
-    padding: 30px 0;
-    row-gap: 20px;
-  }
-}
-
-.logo-img {
-  display: block;
-  max-height: 32px;
-}
-.nav-list {
-  display: flex;
-  column-gap: 20px;
-}
-.nav-link {
-  font-size: 16px;
-  color: rgba(255,255,255,0.6);
-  transition: 0.4s;
-}
-.nav-link:hover,
-.nav-link:focus {
-  color: rgba(255,255,255,1);
-}
-
-section {
-  height: 600vh;
-  position: relative;
-}
-
-.vid-block {
-  position: sticky;
-  top: 0;
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  font-weight: bold;
-  color: #fff;
-}
-.vid-block video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-#intro .vid-block { background: rgba(255, 0, 0, 0.4); }
-#gallery .vid-block { background: rgba(0, 255, 0, 0.4); }
-#contact .vid-block { background: rgba(0, 0, 255, 0.4); }
-
-.intro__story {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  color: white;
-}
-
-.story-block {
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 0 10%;
-}
-
-.story-inner {
-  max-width: 60ch;
-  opacity: 0;
-  transition: opacity 0.3s linear;
-}
-
-.story-inner h1 {
-  font-size: 2.5em;
-  margin-bottom: 0.8em;
-}
-
-.story-inner p {
-  font-size: 1.2em;
-  line-height: 1.6;
-  margin: 0;
-}
-</style>
+    .story-inner p {
+      font-size: 1.2em;
+      line-height: 1.6;
+      margin: 0;
+    }
+    /* Grid Layout for Gallery */
+    .wrapper {
+      /* max-width: 940px; */
+      margin: 0 auto;
+    }
+    .wrapper > div {
+      border: 1px solid rgb(255 255 250 / 50%);
+      border-radius: 5px;
+      /* background-color: rgb(233 171 88 / 50%); */
+      padding: 1em;
+      /* color: #d9480f; */
+    }
+    .wrapper > div img{
+      max-width: 100%;
+      height: auto;
+    }
+    .wrapper {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      grid-auto-rows: minmax(100px, auto);
+    }
+    /* Grid Arrangement */
+    .a {
+      grid-column: 1 ;
+      grid-row: 1 / 2;
+    }
+    .g {
+      grid-column: 3;
+      grid-row: 2 / 4;
+    }
+  </style>
 </head>
 <body>
 
-<header id="header" class="header">
-  <div class="header-block">
-    <a href="#" class="nav-link"><img src="med/christopher-jones-logo-inter-100.svg" alt="logo" class="logo-img" /></a>
-    <nav class="nav">
-      <ul class="nav-list">
-        <li><a href="#intro" class="nav-link">Abstract</a></li>
-        <li><a href="#gallery" class="nav-link">Figurative</a></li>
-        <li><a href="#contact" class="nav-link">Landscape</a></li>
-      </ul>
-    </nav>
-  </div>
-</header>
+  <header id="header" class="header">
+    <div class="header-block">
+      <a href="#" class="nav-link"><object type="image/svg+xml" data="med/chris-jones-org-uk-animated.svg"></object></a>
+      <nav class="nav">
+        <ul class="nav-list">
+          <li><a href="#abstracts" class="nav-link">Abstracts</a></li>
+          <li><a href="#figures" class="nav-link">Figures</a></li>
+          <li><a href="#plein-air" class="nav-link">Plein&nbsp;Air</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  
+  <main id="main-content">
 
-<!-- INTRO -->
-<section id="intro">
-  <div class="vid-block">
-    <video preload="auto" muted playsinline>
-      <source src="med/forest-fall.mp4" type="video/mp4">
-    </video>
-  </div>
-  <div class="intro__story">
-    <div class="story-block"><div class="story-inner"><h1>Intro 1</h1><p>First intro block.</p></div></div>
-    <div class="story-block"><div class="story-inner"><h1>Intro 2</h1><p>Second intro block.</p></div></div>
-    <div class="story-block"><div class="story-inner"><h1>Intro 3</h1><p>Third intro block.</p></div></div>
-    <div class="story-block"><div class="story-inner"><h1>Intro 4</h1><p>Fourth intro block.</p></div></div>
-    <div class="story-block"><div class="story-inner"><h1>Intro 5</h1><p>Fifth intro block.</p></div></div>
-  </div>
-</section>
+    <section id="gallery">
+      <div class="gallery-block">
+        <div class="wrapper">
+          <div class="a"><a href="img/green-background-seven-figures.png"><img src="img/green-background-seven-figures.png"></a></div>
+          <div class="b"><a href="img/blue.png"><img src="img/blue.png"></a></div>
+          <div class="c"><a href="img/orange.png"><img src="img/orange.png"></a></div>
+          <div class="d"><a href="img/purple.png"><img src="img/purple.png"></a></div>
+          <div class="e"><a href="img/red-thick-border.png"><img src="img/red-thick-border.png"></a></div>
+          <div class="f"><a href="img/seascape-2018.png"><img src="img/seascape-2018.png"></a></div>
+          <div class="f"><a href="img/mont-sainte-victoire-a.png"><img src="img/mont-sainte-victoire-a.png"></a></div>
+          <div class="g"><a href="img/madrid-canal.png"><img src="img/madrid-canal.png"></a></div>
+        </div>
+      </div>
+    </section>
 
-<!-- GALLERY -->
-<section id="gallery">
-  <div class="vid-block">
-    <video preload="auto" muted playsinline>
-      <source src="med/forest-fall.mp4" type="video/mp4">
-    </video>
-  </div>
-  <div class="intro__story">
-    <div class="story-block"><div class="story-inner"><h1>Gallery 1</h1><p>First gallery block.</p></div></div>
-    <div class="story-block"><div class="story-inner"><h1>Gallery 2</h1><p>Second gallery block.</p></div></div>
-    <div class="story-block"><div class="story-inner"><h1>Gallery 3</h1><p>Third gallery block.</p></div></div>
-    <div class="story-block"><div class="story-inner"><h1>Gallery 4</h1><p>Fourth gallery block.</p></div></div>
-    <div class="story-block"><div class="story-inner"><h1>Gallery 5</h1><p>Fifth gallery block.</p></div></div>
-  </div>
-</section>
+    <!-- Water -->
+    <section id="water">
+      <div class="water-block">
+        <video autoplay muted playsinline webkit-playsinline preload="auto">
+          <source src="med/water.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="intro__story">
+        <div class="story-block"><div class="story-inner"><h1>Intro 1</h1><p>First intro block.</p></div></div>
+        <div class="story-block"><div class="story-inner"><h1>Intro 2</h1><p>Second intro block.</p></div></div>
+        <div class="story-block"><div class="story-inner"><h1>Intro 3</h1><p>Third intro block.</p></div></div>
+        <div class="story-block"><div class="story-inner"><h1>Intro 4</h1><p>Fourth intro block.</p></div></div>
+        <div class="story-block"><div class="story-inner"><h1>Intro 5</h1><p>Fifth intro block.</p></div></div>
+      </div>
+    </section>
 
-<!-- CONTACT -->
-<section id="contact">
-  <div class="vid-block">
-    <video preload="auto" muted playsinline>
-      <source src="med/forest-fall.mp4" type="video/mp4">
-    </video>
-  </div>
-  <div class="intro__story">
-    <div class="story-block"><div class="story-inner"><h1>Contact 1</h1><p>First contact block.</p></div></div>
-    <div class="story-block"><div class="story-inner"><h1>Contact 2</h1><p>Second contact block.</p></div></div>
-    <div class="story-block"><div class="story-inner"><h1>Contact 3</h1><p>Third contact block.</p></div></div>
-    <div class="story-block"><div class="story-inner"><h1>Contact 4</h1><p>Fourth contact block.</p></div></div>
-    <div class="story-block"><div class="story-inner"><h1>Contact 5</h1><p>Fifth contact block.</p></div></div>
-  </div>
-</section>
+  </main>
 
-<script>
-const MAX_OPACITY = 0.75;
-const SCRUB_DAMPING = 0.1;
+  <script>
+    const MAX_OPACITY = 0.75;
+    const SCRUB_DAMPING = 0.1;
 
-// NEW: Parameterised scrubbing FPS (change this value to adjust CPU load)
-const SCRUB_FPS = 24; // Match your video or tweak (e.g., 15, 24, 30)
-const SCRUB_INTERVAL = 1000 / SCRUB_FPS;
+    // NEW: Parameterised scrubbing FPS (change this value to adjust CPU load)
+    const SCRUB_FPS = 30; // Match your video or tweak (e.g., 15, 24, 30)
+    const SCRUB_INTERVAL = 1000 / SCRUB_FPS;
 
-const active = new Set();
+    const active = new Set();
 
-// Fade Observer
-const io = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    const block = entry.target;
-    const inner = block.querySelector('.story-inner');
-    if (!inner) return;
-    if (entry.isIntersecting) {
-      active.add(block);
-    } else {
-      inner.style.opacity = '0';
-      active.delete(block);
+    // Fade Observer
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        const block = entry.target;
+        const inner = block.querySelector('.story-inner');
+        if (!inner) return;
+        if (entry.isIntersecting) {
+          active.add(block);
+        } else {
+          inner.style.opacity = '0';
+          active.delete(block);
+        }
+      });
+    }, { rootMargin: '30% 0px 30% 0px', threshold: 0 });
+
+    document.querySelectorAll('.story-block').forEach(b => io.observe(b));
+
+    function updateOpacity() {
+      const vh = window.innerHeight;
+      const topBand = 0.20 * vh;
+      const bottomBand = 0.80 * vh;
+
+      active.forEach(block => {
+        const inner = block.querySelector('.story-inner');
+        if (!inner) return;
+
+        const rect = inner.getBoundingClientRect();
+        const top = rect.top;
+        const bottom = rect.bottom;
+        let opacity = 0;
+
+        if (bottom <= 0 || top >= vh) {
+          opacity = 0;
+        } else {
+          if (bottom > bottomBand) {
+            const progressIn = Math.min(Math.max((vh - bottom) / (vh - bottomBand), 0), 1);
+            opacity = MAX_OPACITY * progressIn;
+          } else if (top < topBand) {
+            const progressOut = Math.min(Math.max(top / topBand, 0), 1);
+            opacity = MAX_OPACITY * progressOut;
+          } else {
+            opacity = MAX_OPACITY;
+          }
+        }
+        inner.style.opacity = opacity.toFixed(3);
+      });
     }
-  });
-}, { rootMargin: '30% 0px 30% 0px', threshold: 0 });
 
-document.querySelectorAll('.story-block').forEach(b => io.observe(b));
+    // Smooth scrubbing with FPS throttling
+    const scrubTargets = new Map();
+    const sections = document.querySelectorAll('section');
+    let lastScrubUpdate = 0;
 
-function updateOpacity() {
-  const vh = window.innerHeight;
-  const topBand = 0.20 * vh;
-  const bottomBand = 0.80 * vh;
+    function updateScrubTargets() {
+      const scrollY = window.scrollY;
+      const vh = window.innerHeight;
 
-  active.forEach(block => {
-    const inner = block.querySelector('.story-inner');
-    if (!inner) return;
+      sections.forEach(section => {
+        const video = section.querySelector('.water-block video');
+        if (!video || !video.duration) return;
 
-    const rect = inner.getBoundingClientRect();
-    const top = rect.top;
-    const bottom = rect.bottom;
-    let opacity = 0;
+        const rect = section.getBoundingClientRect();
+        const sectionTop = rect.top + scrollY;
+        const sectionHeight = section.offsetHeight;
+        const start = sectionTop;
+        const end = sectionTop + sectionHeight - vh;
 
-    if (bottom <= 0 || top >= vh) {
-      opacity = 0;
-    } else {
-      if (bottom > bottomBand) {
-        const progressIn = Math.min(Math.max((vh - bottom) / (vh - bottomBand), 0), 1);
-        opacity = MAX_OPACITY * progressIn;
-      } else if (top < topBand) {
-        const progressOut = Math.min(Math.max(top / topBand, 0), 1);
-        opacity = MAX_OPACITY * progressOut;
-      } else {
-        opacity = MAX_OPACITY;
-      }
+        const progress = Math.min(Math.max((scrollY - start) / (end - start), 0), 1);
+        scrubTargets.set(video, video.duration * progress);
+      });
     }
-    inner.style.opacity = opacity.toFixed(3);
-  });
-}
 
-// Smooth scrubbing with FPS throttling
-const scrubTargets = new Map();
-const sections = document.querySelectorAll('section');
-let lastScrubUpdate = 0;
+    let scrubActive = false;
+    let scrollStopTimeout;
+    const SCRUB_SNAP_EPS = 1 / SCRUB_FPS; // seconds; about one frame at your scrub FPS
 
-function updateScrubTargets() {
-  const scrollY = window.scrollY;
-  const vh = window.innerHeight;
+    function smoothScrub(timestamp) {
+      if (timestamp - lastScrubUpdate >= SCRUB_INTERVAL) {
+        scrubTargets.forEach((target, video) => {
+          if (!video.duration) return;
+          const diff = target - video.currentTime;
+          const adiff = Math.abs(diff);
 
-  sections.forEach(section => {
-    const video = section.querySelector('.vid-block video');
-    if (!video || !video.duration) return;
-
-    const rect = section.getBoundingClientRect();
-    const sectionTop = rect.top + scrollY;
-    const sectionHeight = section.offsetHeight;
-    const start = sectionTop;
-    const end = sectionTop + sectionHeight - vh;
-
-    const progress = Math.min(Math.max((scrollY - start) / (end - start), 0), 1);
-    scrubTargets.set(video, video.duration * progress);
-  });
-}
-
-let scrubActive = false;
-let scrollStopTimeout;
-
-function smoothScrub(timestamp) {
-  if (timestamp - lastScrubUpdate >= SCRUB_INTERVAL) {
-    scrubTargets.forEach((target, video) => {
-      if (!video.duration) return;
-      const diff = target - video.currentTime;
-      if (Math.abs(diff) > 0.01) {
-        video.currentTime += diff * SCRUB_DAMPING;
+          if (adiff <= SCRUB_SNAP_EPS * 2) { // Allow for a slightly larger snap window
+            video.currentTime = target;
+          } else {
+            video.currentTime += diff * SCRUB_DAMPING;
+          }
+        });
+        lastScrubUpdate = timestamp;
       }
+      if (scrubActive) requestAnimationFrame(smoothScrub);
+    }
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updateOpacity();
+          updateScrubTargets();
+          ticking = false;
+        });
+        ticking = true;
+      }
+
+      if (!scrubActive) {
+        scrubActive = true;
+        requestAnimationFrame(smoothScrub);
+      }
+      clearTimeout(scrollStopTimeout);
+      scrollStopTimeout = setTimeout(() => {
+        scrubActive = false;
+
+        // Final, smoother snap using a short-lived loop
+        let start = null;
+        const finalLoop = (timestamp) => {
+          if (!start) start = timestamp;
+          const elapsed = timestamp - start;
+          const progress = Math.min(elapsed / FINAL_SNAP_DURATION, 1);
+
+          scrubTargets.forEach((target, video) => {
+            if (!video || !video.duration) return;
+            const current = video.currentTime;
+            // Interpolate smoothly to the final target
+            video.currentTime = current + (target - current) * progress;
+          });
+
+          if (progress < 1) {
+            requestAnimationFrame(finalLoop);
+          } else {
+            // Once the final loop is complete, ensure it's snapped exactly
+            scrubTargets.forEach((target, video) => {
+              if (!video || !video.duration) return;
+              video.currentTime = target;
+            });
+          }
+        };
+        requestAnimationFrame(finalLoop);
+      }, 150);
     });
-    lastScrubUpdate = timestamp;
-  }
-  if (scrubActive) requestAnimationFrame(smoothScrub);
-}
 
-let ticking = false;
-window.addEventListener('scroll', () => {
-  if (!ticking) {
-    requestAnimationFrame(() => {
+    window.addEventListener('resize', () => {
       updateOpacity();
       updateScrubTargets();
-      ticking = false;
     });
-    ticking = true;
-  }
 
-  if (!scrubActive) {
-    scrubActive = true;
-    requestAnimationFrame(smoothScrub);
-  }
-  clearTimeout(scrollStopTimeout);
-  scrollStopTimeout = setTimeout(() => {
-    scrubActive = false;
-  }, 150);
-});
-
-window.addEventListener('resize', () => {
-  updateOpacity();
-  updateScrubTargets();
-});
-
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    updateOpacity();
-    updateScrubTargets();
-  }, 800);
-});
-</script>
-</body>
+    window.addEventListener('load', () => {
+        document.querySelectorAll('video').forEach(v => {
+          v.pause();
+          v.currentTime = 0;
+      });
+      setTimeout(() => {
+        updateOpacity();
+        updateScrubTargets();
+      }, 800);
+    });
+    </script>
+  </body>
 </html>
-
