@@ -80,7 +80,45 @@
         padding: 30px 0;
         row-gap: 20px;
       }
-    }
+      .gallery-block {
+        padding: 0 10px; /* reduce padding even more on mobile */
+      }
+      .wrapper {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      }
+    }/* Desktop: keep the special layout */
+@media (min-width: 900px) {
+  .gallery-block { padding: 0 120px; }              /* your original desktop padding is fine */
+  .wrapper { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .a { grid-column: 1; grid-row: 1 / 2; }
+  .g { grid-column: 3; grid-row: 2 / 4; }
+}
+
+/* Tablet */
+@media (max-width: 899px) and (min-width: 541px) {
+  .gallery-block { padding: 0 24px; }
+  .wrapper { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* kill manual placement so items flow naturally */
+  .a, .g { grid-column: auto !important; grid-row: auto !important; }
+}
+@media (max-width: 720px) {
+  .nav-link object {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    left: 8%;   /* shift right a bit */
+  }
+}
+/* Phones */
+@media (max-width: 540px) {
+  main {
+    margin-top: 220px !important;
+  }
+  .gallery-block { padding: 0 12px; }
+  .wrapper { grid-template-columns: 1fr; }
+  .a, .g { grid-column: auto !important; grid-row: auto !important; }
+}
     .logo-img {
       display: block;
       /* max-height: 32px; */
@@ -114,7 +152,7 @@
       align-items: center;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 120px;
+      padding: 0 20px; /* smaller padding */
     }
     /* Water */
     section#water {
@@ -202,9 +240,9 @@
     }
     .wrapper {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* responsive columns */
       gap: 10px;
-      grid-auto-rows: minmax(100px, auto);
+      grid-auto-rows: auto; /* let height be flexible */
     }
     /* Grid Arrangement */
     .a {
