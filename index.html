@@ -72,7 +72,8 @@
       justify-content: space-between;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 120px;
+      /* padding: 0 120px; */
+      padding: 0 20px; /* smaller padding */
     }
     @media(max-width: 720px) {
       .header-block {
@@ -86,39 +87,40 @@
       .wrapper {
         grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       }
-    }/* Desktop: keep the special layout */
-@media (min-width: 900px) {
-  .gallery-block { padding: 0 120px; }              /* your original desktop padding is fine */
-  .wrapper { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .a { grid-column: 1; grid-row: 1 / 2; }
-  .g { grid-column: 3; grid-row: 2 / 4; }
-}
-
-/* Tablet */
-@media (max-width: 899px) and (min-width: 541px) {
-  .gallery-block { padding: 0 24px; }
-  .wrapper { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  /* kill manual placement so items flow naturally */
-  .a, .g { grid-column: auto !important; grid-row: auto !important; }
-}
-@media (max-width: 720px) {
-  .nav-link object {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    position: relative;
-    left: 8%;   /* shift right a bit */
-  }
-}
-/* Phones */
-@media (max-width: 540px) {
-  main {
-    margin-top: 220px !important;
-  }
-  .gallery-block { padding: 0 12px; }
-  .wrapper { grid-template-columns: 1fr; }
-  .a, .g { grid-column: auto !important; grid-row: auto !important; }
-}
+    }
+    /* Desktop: keep the special layout */
+    @media (min-width: 900px) {
+      .gallery-block { padding: 0 120px; }              /* your original desktop padding is fine */
+      .wrapper { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      /* .a { grid-column: 1 / 3; grid-row: 1 / 3; }
+      .h { grid-column: 3; grid-row: 2 / 4; }
+      .i { grid-column: 2; grid-row: 2 / 4; } */
+    }
+    /* Tablet */
+    @media (max-width: 899px) and (min-width: 541px) {
+      .gallery-block { padding: 0 24px; }
+      .wrapper { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      /* kill manual placement so items flow naturally */
+      .a, .g { grid-column: auto !important; grid-row: auto !important; }
+    }
+    @media (max-width: 720px) {
+      .nav-link object {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        position: relative;
+        left: 8%;   /* shift right a bit */
+      }
+    }
+    /* Phones */
+    @media (max-width: 540px) {
+      main {
+        margin-top: 220px !important;
+      }
+      .gallery-block { padding: 0 12px; }
+      .wrapper { grid-template-columns: 1fr; }
+      .a, .g { grid-column: auto !important; grid-row: auto !important; }
+    }
     .logo-img {
       display: block;
       /* max-height: 32px; */
@@ -244,14 +246,31 @@
       gap: 10px;
       grid-auto-rows: auto; /* let height be flexible */
     }
+    .wrapper > div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .wrapper > div p {
+      color: white;
+      text-align: center;
+      margin-top: 0.5em;
+      font-size: 0.9rem; /* optional, make caption smaller */
+    }
     /* Grid Arrangement */
     .a {
-      grid-column: 1 ;
-      grid-row: 1 / 2;
+      /* grid-column: 1 ;
+      grid-row: 1 / 2; */
     }
     .g {
-      grid-column: 3;
-      grid-row: 2 / 4;
+      /* grid-column: 3;
+      grid-row: 2 / 4; */
+    }
+    .portrait {
+      grid-row: span 2; /* Span two rows for portrait images */
+    }
+    .landscape {
+      grid-row: span 1 !important; /* Span one row for landscape images */
     }
   </style>
 </head>
@@ -272,17 +291,25 @@
   
   <main id="main-content">
 
+    <!-- Gallery -->
     <section id="gallery">
       <div class="gallery-block">
         <div class="wrapper">
-          <div class="a"><a href="img/green-background-seven-figures.png"><img src="img/green-background-seven-figures.png"></a></div>
-          <div class="b"><a href="img/blue.png"><img src="img/blue.png"></a></div>
-          <div class="c"><a href="img/orange.png"><img src="img/orange.png"></a></div>
-          <div class="d"><a href="img/purple.png"><img src="img/purple.png"></a></div>
-          <div class="e"><a href="img/red-thick-border.png"><img src="img/red-thick-border.png"></a></div>
-          <div class="f"><a href="img/seascape-2018.png"><img src="img/seascape-2018.png"></a></div>
-          <div class="f"><a href="img/mont-sainte-victoire-a.png"><img src="img/mont-sainte-victoire-a.png"></a></div>
-          <div class="g"><a href="img/madrid-canal.png"><img src="img/madrid-canal.png"></a></div>
+          <!-- Abstracts -->
+          <div class="landscape"><a href="img/green-background-seven-figures.png"><img src="img/green-background-seven-figures.png"></a><p>Seven Figures in a Green Space</p></div>
+          <div class="landscape"><a href="img/blue.png"><img src="img/blue.png"></a><p>Composition in Blue with Border</p></div>
+          <div class="landscape"><a href="img/orange.png"><img src="img/orange.png"></a><p>Composition in Orange</p></div>
+          <div class="landscape"><a href="img/purple.png"><img src="img/purple.png"></a><p>Composition in Purple</p></div>
+          <div class="landscape"><a href="img/red-thick-border.png"><img src="img/red-thick-border.png"></a><p>Composition in Red with Border</p></div>
+          <div class="landscape"><a href="img/abstract-colaboration-with-theo-1-1536.png"><img src="img/abstract-colaboration-with-theo-1-1536.png"></a><p>Collaboration with Theo #1</p></div>
+          <div class="landscape"><a href="img/abstract-colaboration-with-theo-2.png"><img src="img/abstract-colaboration-with-theo-2.png"></a><p>Collaboration with Theo #2</p></div>
+          
+          <!-- Plein Air -->
+          <div class="landscape"><a href="img/seascape-2018.png"><img src="img/seascape-2018.png"></a><p>Seascape 2018</p></div>
+          <div class="landscape"><a href="img/mont-sainte-victoire-a.png"><img src="img/mont-sainte-victoire-a.png"></a><p>Mont Sainte&#8209;)Victoire, after Cézanne</p></div>
+          <div class="portrait"><a href="img/granada-cjon-de-las-tomasas.png"><img src="img/granada-cjon-de-las-tomasas.png"></a><p>Cjón. de las Tomasas, Albaicín, Granada</p></div>
+          <div class="portrait"><a href="img/milan-ponte-alda-merini.png"><img src="img/milan-ponte-alda-merini.png"></a><p>Ponte Alda Merini, Milan</p></div>
+          <div class="portrait"><a href="img/brussels-nighttime-street.png"><img src="img/brussels-nighttime-street.png"></a><p>Nighttime, Brussles, 2013</p></div>
         </div>
       </div>
     </section>
