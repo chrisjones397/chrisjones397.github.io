@@ -39,6 +39,7 @@
     body, html {
       margin: 0;
       padding: 0;
+      color:#fff;
       background: #000;
       font-family: "Inter", sans-serif;
       background-color: rgb(100, 100, 100);
@@ -266,7 +267,10 @@
     .g {
       /* grid-column: 3;
       grid-row: 2 / 4; */
+    }.entire {
+      grid-column: 1 / -1;
     }
+
     .portrait {
       grid-row: span 2; /* Span two rows for portrait images */
     }
@@ -282,8 +286,8 @@
       <a href="#" class="nav-link"><object type="image/svg+xml" data="med/chris-jones-org-uk-animated.svg"></object></a>
       <nav class="nav">
         <ul class="nav-list">
-          <li><a href="#abstracts" class="nav-link">Abstracts</a></li>
           <li><a href="#figures" class="nav-link">Figures</a></li>
+          <li><a href="#abstracts" class="nav-link">Abstracts</a></li>
           <li><a href="#plein-air" class="nav-link">Plein&nbsp;Air</a></li>
         </ul>
       </nav>
@@ -296,16 +300,19 @@
     <section id="gallery">
       <div class="gallery-block">
         <div class="wrapper">
+          <!-- Figures -->
+          <div class="entire"><h3>Figures</h3></div>
+          <div class="entire"><a href="img/green-background-seven-figures.png"><img src="img/green-background-seven-figures.png"></a><p>Seven Figures in a Green Space</p></div>
           <!-- Abstracts -->
-          <div class="landscape"><a href="img/green-background-seven-figures.png"><img src="img/green-background-seven-figures.png"></a><p>Seven Figures in a Green Space</p></div>
+          <div class="entire"><h3>Abstracts</h3></div>
           <div class="landscape"><a href="img/blue.png"><img src="img/blue.png"></a><p>Composition in Blue with Border</p></div>
           <div class="landscape"><a href="img/orange.png"><img src="img/orange.png"></a><p>Composition in Orange</p></div>
           <div class="landscape"><a href="img/purple.png"><img src="img/purple.png"></a><p>Composition in Purple</p></div>
           <div class="landscape"><a href="img/red-thick-border.png"><img src="img/red-thick-border.png"></a><p>Composition in Red with Border</p></div>
           <div class="landscape"><a href="img/abstract-colaboration-with-theo-1-1536.png"><img src="img/abstract-colaboration-with-theo-1-1536.png"></a><p>Collaboration with Theo #1</p></div>
           <div class="landscape"><a href="img/abstract-colaboration-with-theo-2.png"><img src="img/abstract-colaboration-with-theo-2.png"></a><p>Collaboration with Theo #2</p></div>
-          
-          <!-- Plein Air -->
+          <!-- Plein Air-->
+          <div class="entire"><h3>Plein Air</h3></div>
           <div class="landscape"><a href="img/seascape-2018.png"><img src="img/seascape-2018.png"></a><p>Seascape 2018</p></div>
           <div class="landscape"><a href="img/mont-sainte-victoire-a.png"><img src="img/mont-sainte-victoire-a.png"></a><p>Mont Sainte&#8209;Victoire, after Cézanne</p></div>
           <div class="portrait"><a href="img/granada-cjon-de-las-tomasas.png"><img src="img/granada-cjon-de-las-tomasas.png"></a><p>Cjón. de las Tomasas, Albaicín, Granada</p></div>
