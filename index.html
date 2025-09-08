@@ -300,24 +300,391 @@
     <section id="gallery">
       <div class="gallery-block">
         <div class="wrapper">
+          
           <!-- Figures -->
-          <div class="entire"><h3>Figures</h3></div>
-          <div class="entire"><a href="img/green-background-seven-figures.png"><img src="img/green-background-seven-figures.png"></a><p>Seven Figures in a Green Space</p></div>
+          <div class="entire"><h3 id="figures">Figures</h3></div>
+
+          <div class="entire">
+            <a href="img/green-background-seven-figures.png">
+            <picture>
+              <source 
+                srcset="
+                  img/webp/green-background-seven-figures-300.webp 300w,
+                  img/webp/green-background-seven-figures-480.webp 480w,
+                  img/webp/green-background-seven-figures-768.webp 768w,
+                  img/webp/green-background-seven-figures-1024.webp 1024w,
+                  img/webp/green-background-seven-figures-1536.webp 1536w
+                "
+                type="image/webp"
+                sizes="100vw">
+              <source 
+                srcset="
+                  img/jpg/green-background-seven-figures-300.jpg 300w,
+                  img/jpg/green-background-seven-figures-480.jpg 480w,
+                  img/jpg/green-background-seven-figures-768.jpg 768w,
+                  img/jpg/green-background-seven-figures-1024.jpg 1024w,
+                  img/jpg/green-background-seven-figures-1536.jpg 1536w
+                "
+                type="image/jpeg"
+                sizes="100vw">
+              <img 
+                src="img/jpg/green-background-seven-figures-768.jpg" 
+                alt="Green Background with Seven Figures"
+                loading="lazy">
+            </picture>
+            </a>
+            <p>Seven Figures in a Green Space</p>
+          </div>
+
           <!-- Abstracts -->
-          <div class="entire"><h3>Abstracts</h3></div>
-          <div class="landscape"><a href="img/blue.png"><img src="img/blue.png"></a><p>Composition in Blue with Border</p></div>
-          <div class="landscape"><a href="img/orange.png"><img src="img/orange.png"></a><p>Composition in Orange</p></div>
-          <div class="landscape"><a href="img/purple.png"><img src="img/purple.png"></a><p>Composition in Purple</p></div>
-          <div class="landscape"><a href="img/red-thick-border.png"><img src="img/red-thick-border.png"></a><p>Composition in Red with Border</p></div>
-          <div class="landscape"><a href="img/abstract-colaboration-with-theo-1-1536.png"><img src="img/abstract-colaboration-with-theo-1-1536.png"></a><p>Collaboration with Theo #1</p></div>
-          <div class="landscape"><a href="img/abstract-colaboration-with-theo-2.png"><img src="img/abstract-colaboration-with-theo-2.png"></a><p>Collaboration with Theo #2</p></div>
+          <div class="entire"><h3 id="abstracts">Abstracts</h3></div>
+
+          <div class="landscape">
+            <a href="img/blue.png">
+              <picture>
+                <source 
+                  srcset="img/webp/blue-300.webp 300w, img/webp/blue-480.webp 480w, img/webp/blue-768.webp 768w, img/webp/blue-1024.webp 1024w, img/webp/blue-1536.webp 1536w"
+                  type="image/webp"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <source 
+                  srcset="
+                    img/jpg/blue-300.jpg 300w,
+                    img/jpg/blue-480.jpg 480w,
+                    img/jpg/blue-768.jpg 768w,
+                    img/jpg/blue-1024.jpg 1024w,
+                    img/jpg/blue-1536.jpg 1536w
+                  "
+                  type="image/jpeg"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <img 
+                  src="img/jpg/blue-480.jpg" 
+                  alt="Blue Composition with Border"
+                  loading="lazy">
+              </picture>
+            </a>
+            <p>Composition in Blue with Border</p>
+          </div>
+
+          <div class="landscape">
+            <a href="img/orange.png">
+              <picture>
+                <source 
+                  srcset="img/webp/orange-300.webp 300w, img/webp/orange-480.webp 480w, img/webp/orange-768.webp 768w, img/webp/orange-1024.webp 1024w, img/webp/orange-1536.webp 1536w"
+                  type="image/webp"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <source 
+                  srcset="
+                    img/jpg/orange-300.jpg 300w,
+                    img/jpg/orange-480.jpg 480w,
+                    img/jpg/orange-768.jpg 768w,
+                    img/jpg/orange-1024.jpg 1024w,
+                    img/jpg/orange-1536.jpg 1536w
+                  "
+                  type="image/jpeg"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <img 
+                  src="img/jpg/orange-480.jpg" 
+                  alt="Blue Composition with Border"
+                  loading="lazy">
+              </picture>
+            </a>
+            <p>Composition in Orange</p>
+          </div>
+
+          <div class="landscape">
+            <a href="img/purple.png">
+              <picture>
+                <source 
+                  srcset="img/webp/purple-300.webp 300w, img/webp/purple-480.webp 480w, img/webp/purple-768.webp 768w, img/webp/purple-1024.webp 1024w, img/webp/purple-1536.webp 1536w"
+                  type="image/webp"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <source 
+                  srcset="
+                    img/jpg/purple-300.jpg 300w,
+                    img/jpg/purple-480.jpg 480w,
+                    img/jpg/purple-768.jpg 768w,
+                    img/jpg/purple-1024.jpg 1024w,
+                    img/jpg/purple-1536.jpg 1536w
+                  "
+                  type="image/jpeg"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <img 
+                  src="img/jpg/purple-480.jpg" 
+                  alt="Composition in Purple"
+                  loading="lazy">
+              </picture>
+            </a>
+            <p>Composition in Purple</p>
+          </div>
+
+          <div class="landscape">
+            <a href="img/red-thick-border.png">
+              <picture>
+                <source 
+                  srcset="img/webp/red-thick-border-300.webp 300w, img/webp/red-thick-border-480.webp 480w, img/webp/red-thick-border-768.webp 768w, img/webp/red-thick-border-1024.webp 1024w, img/webp/red-thick-border-1536.webp 1536w"
+                  type="image/webp"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <source 
+                  srcset="
+                    img/jpg/red-thick-border-300.jpg 300w,
+                    img/jpg/red-thick-border-480.jpg 480w,
+                    img/jpg/red-thick-border-768.jpg 768w,
+                    img/jpg/red-thick-border-1024.jpg 1024w,
+                    img/jpg/red-thick-border-1536.jpg 1536w
+                  "
+                  type="image/jpeg"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <img 
+                  src="img/jpg/red-thick-border-480.jpg" 
+                  alt="Composition in Red with Border"
+                  loading="lazy">
+              </picture>
+            </a>
+            <p>Composition in Red with Border</p>
+          </div>
+          
+          <div class="landscape">
+            <a href="img/abstract-colaboration-with-theo-1.png">
+              <picture>
+                <source 
+                  srcset="img/webp/abstract-colaboration-with-theo-1-300.webp 300w, img/webp/abstract-colaboration-with-theo-1-480.webp 480w, img/webp/abstract-colaboration-with-theo-1-768.webp 768w, img/webp/abstract-colaboration-with-theo-1-1024.webp 1024w, img/webp/abstract-colaboration-with-theo-1-1536.webp 1536w"
+                  type="image/webp"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <source 
+                  srcset="
+                    img/jpg/abstract-colaboration-with-theo-1-300.jpg 300w,
+                    img/jpg/abstract-colaboration-with-theo-1-480.jpg 480w,
+                    img/jpg/abstract-colaboration-with-theo-1-768.jpg 768w,
+                    img/jpg/abstract-colaboration-with-theo-1-1024.jpg 1024w,
+                    img/jpg/abstract-colaboration-with-theo-1-1536.jpg 1536w
+                  "
+                  type="image/jpeg"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <img 
+                  src="img/jpg/abstract-colaboration-with-theo-1-480.jpg" 
+                  alt="Collaboration with Theo #1"
+                  loading="lazy">
+              </picture>
+            </a>
+            <p>Collaboration with Theo #1</p>
+          </div>
+
+          <div class="landscape">
+            <a href="img/abstract-colaboration-with-theo-2.png">
+              <picture>
+                <source 
+                  srcset="img/webp/abstract-colaboration-with-theo-2-300.webp 300w, img/webp/abstract-colaboration-with-theo-2-480.webp 480w, img/webp/abstract-colaboration-with-theo-2-768.webp 768w, img/webp/abstract-colaboration-with-theo-2-1024.webp 1024w, img/webp/abstract-colaboration-with-theo-2-1536.webp 1536w"
+                  type="image/webp"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <source 
+                  srcset="
+                    img/jpg/abstract-colaboration-with-theo-2-300.jpg 300w,
+                    img/jpg/abstract-colaboration-with-theo-2-480.jpg 480w,
+                    img/jpg/abstract-colaboration-with-theo-2-768.jpg 768w,
+                    img/jpg/abstract-colaboration-with-theo-2-1024.jpg 1024w,
+                    img/jpg/abstract-colaboration-with-theo-2-1536.jpg 1536w
+                  "
+                  type="image/jpeg"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <img 
+                  src="img/jpg/abstract-colaboration-with-theo-2-480.jpg" 
+                  alt="Collaboration with Theo #2"
+                  loading="lazy">
+              </picture>
+            </a>
+            <p>Collaboration with Theo #2</p>
+          </div>
+
           <!-- Plein Air-->
-          <div class="entire"><h3>Plein Air</h3></div>
-          <div class="landscape"><a href="img/seascape-2018.png"><img src="img/seascape-2018.png"></a><p>Seascape 2018</p></div>
-          <div class="landscape"><a href="img/mont-sainte-victoire-a.png"><img src="img/mont-sainte-victoire-a.png"></a><p>Mont Sainte&#8209;Victoire, after Cézanne</p></div>
-          <div class="portrait"><a href="img/granada-cjon-de-las-tomasas.png"><img src="img/granada-cjon-de-las-tomasas.png"></a><p>Cjón. de las Tomasas, Albaicín, Granada</p></div>
-          <div class="portrait"><a href="img/milan-ponte-alda-merini.png"><img src="img/milan-ponte-alda-merini.png"></a><p>Ponte Alda Merini, Milan</p></div>
-          <div class="portrait"><a href="img/brussels-nighttime-street.png"><img src="img/brussels-nighttime-street.png"></a><p>Nighttime, Brussles, 2013</p></div>
+          <div class="entire"><h3 id="plein-air">Plein Air</h3></div>
+
+          <div class="landscape">
+            <a href="img/seascape-2018.png">
+              <picture>
+                <source 
+                  srcset="img/webp/seascape-2018-300.webp 300w, img/webp/seascape-2018-480.webp 480w, img/webp/seascape-2018-768.webp 768w, img/webp/seascape-2018-1024.webp 1024w, img/webp/seascape-2018-1536.webp 1536w"
+                  type="image/webp"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <source 
+                  srcset="
+                    img/jpg/seascape-2018-300.jpg 300w,
+                    img/jpg/seascape-2018-480.jpg 480w,
+                    img/jpg/seascape-2018-768.jpg 768w,
+                    img/jpg/seascape-2018-1024.jpg 1024w,
+                    img/jpg/seascape-2018-1536.jpg 1536w
+                  "
+                  type="image/jpeg"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <img 
+                  src="img/jpg/seascape-2018-480.jpg" 
+                  alt="Seascape 2018"
+                  loading="lazy">
+              </picture>
+            </a>
+            <p>Seascape 2018</p>
+          </div>
+
+          <div class="landscape">
+            <a href="img/mont-sainte-victoire-a.png">
+              <picture>
+                <source 
+                  srcset="img/webp/mont-sainte-victoire-a-300.webp 300w, img/webp/mont-sainte-victoire-a-480.webp 480w, img/webp/mont-sainte-victoire-a-768.webp 768w, img/webp/mont-sainte-victoire-a-1024.webp 1024w, img/webp/mont-sainte-victoire-a-1536.webp 1536w"
+                  type="image/webp"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <source 
+                  srcset="
+                    img/jpg/mont-sainte-victoire-a-300.jpg 300w,
+                    img/jpg/mont-sainte-victoire-a-480.jpg 480w,
+                    img/jpg/mont-sainte-victoire-a-768.jpg 768w,
+                    img/jpg/mont-sainte-victoire-a-1024.jpg 1024w,
+                    img/jpg/mont-sainte-victoire-a-1536.jpg 1536w
+                  "
+                  type="image/jpeg"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <img 
+                  src="img/jpg/mont-sainte-victoire-a-480.jpg" 
+                  alt="Mont Sainte&#8209;Victoire, after Cézanne"
+                  loading="lazy">
+              </picture>
+            </a>
+            <p>Mont Sainte&#8209;Victoire, after Cézanne</p>
+          </div>
+          
+          <div class="portrait">
+            <a href="img/granada-cjon-de-las-tomasas.png">
+              <picture>
+                <source 
+                  srcset="
+                    img/webp/granada-cjon-de-las-tomasas-300.webp 300w,
+                    img/webp/granada-cjon-de-las-tomasas-480.webp 480w,
+                    img/webp/granada-cjon-de-las-tomasas-768.webp 768w,
+                    img/webp/granada-cjon-de-las-tomasas-1024.webp 1024w
+                  "
+                  type="image/webp"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <source 
+                  srcset="
+                    img/jpg/granada-cjon-de-las-tomasas-300.jpg 300w,
+                    img/jpg/granada-cjon-de-las-tomasas-480.jpg 480w,
+                    img/jpg/granada-cjon-de-las-tomasas-768.jpg 768w,
+                    img/jpg/granada-cjon-de-las-tomasas-1024.jpg 1024w
+                  "
+                  type="image/jpeg"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <img 
+                  src="img/jpg/granada-cjon-de-las-tomasas-480.jpg" 
+                  alt="Granada Cjon de las Tomasas"
+                  loading="lazy">
+              </picture>
+            </a>
+            <p>Cjón. de las Tomasas, Albaicín, Granada</p>
+          </div>
+          
+          <div class="portrait">
+            <a href="img/milan-ponte-alda-merini.png">
+              <picture>
+                <source 
+                  srcset="
+                    img/webp/milan-ponte-alda-merini-300.webp 300w, 
+                    img/webp/milan-ponte-alda-merini-480.webp 480w, 
+                    img/webp/milan-ponte-alda-merini-768.webp 768w, 
+                    img/webp/milan-ponte-alda-merini-1024.webp 1024w
+                  "
+                  type="image/webp"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <source 
+                  srcset="
+                    img/jpg/milan-ponte-alda-merini-300.jpg 300w,
+                    img/jpg/milan-ponte-alda-merini-480.jpg 480w,
+                    img/jpg/milan-ponte-alda-merini-768.jpg 768w,
+                    img/jpg/milan-ponte-alda-merini-1024.jpg 1024w
+                  "
+                  type="image/jpeg"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <img 
+                  src="img/jpg/milan-ponte-alda-merini-480.jpg" 
+                  alt="Ponte Alda Merini, Milan"
+                  loading="lazy">
+              </picture>
+            </a>
+            <p>Ponte Alda Merini, Milan</p>
+          </div>
+
+          <div class="portrait">
+            <a href="img/brussels-nighttime-street.png">
+              <picture>
+                <source 
+                  srcset="
+                    img/webp/brussels-nighttime-street-300.webp 300w, 
+                    img/webp/brussels-nighttime-street-480.webp 480w, 
+                    img/webp/brussels-nighttime-street-768.webp 768w, 
+                    img/webp/brussels-nighttime-street-1024.webp 1024w, 
+                    img/webp/brussels-nighttime-street-1536.webp 1536w"
+                  type="image/webp"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <source 
+                  srcset="
+                    img/jpg/brussels-nighttime-street-300.jpg 300w,
+                    img/jpg/brussels-nighttime-street-480.jpg 480w,
+                    img/jpg/brussels-nighttime-street-768.jpg 768w,
+                    img/jpg/brussels-nighttime-street-1024.jpg 1024w,
+                    img/jpg/brussels-nighttime-street-1536.jpg 1536w
+                  "
+                  type="image/jpeg"
+                  sizes="(max-width: 540px) 100vw, 
+                    (max-width: 899px) 50vw, 
+                    33vw">
+                <img 
+                  src="img/jpg/brussels-nighttime-street-480.jpg" 
+                  alt="Nighttime, Brussles, 2013"
+                  loading="lazy">
+              </picture>
+            </a>
+            <p>Nighttime, Brussles, 2013</p>
+          </div>
+
         </div>
       </div>
     </section>
