@@ -30,6 +30,7 @@
     html {
       scroll-behavior: smooth;
       scrollbar-gutter: stable;
+      scroll-padding-top: calc(var(--header-height) - 3rem); 
     }
     @media screen and (prefers-reduced-motion: reduce) {
       html {
@@ -259,6 +260,10 @@
       margin-top: 0.5em;
       font-size: 0.9rem; /* optional, make caption smaller */
     }
+    .wrapper > div.entire:has(> a) {
+      border: none; 
+    }
+
     /* Grid Arrangement */
     .a {
       /* grid-column: 1 ;
@@ -278,6 +283,31 @@
       grid-row: span 1 !important; /* Span one row for landscape images */
     }
   </style>
+  <!-- make_pages.py extras: start (rebuilt on every run; edit the script, not this block) -->
+  <style>
+    /* The logo sits inside <object>, which would otherwise swallow clicks,
+       so let clicks pass through to the link around it. */
+    .header a object { pointer-events: none; }
+    /* No outline on the paintings; keep it round the section headings. */
+    .wrapper > div:not(.entire) { border: none; }
+    /* While the logo is being set to its finished state, keep it hidden
+       so the first frame of the animation never flashes up. */
+    html.logo-still .header object { visibility: hidden; }
+    html.logo-still.logo-ready .header object { visibility: visible; }
+  </style>
+  <script>
+    /* Decide before anything is drawn whether the logo should animate:
+       painting pages never animate it; the main page animates it only on a
+       visitor's first view in this browser session. */
+    (function () {
+      var root = document.documentElement, seen = false;
+      if (root.getAttribute('data-page') === 'painting') { root.classList.add('logo-still'); return; }
+      try { seen = sessionStorage.getItem('logoSeen') === '1'; } catch (e) {}
+      if (seen) root.classList.add('logo-still');
+      try { sessionStorage.setItem('logoSeen', '1'); } catch (e) {}
+    })();
+  </script>
+  <!-- make_pages.py extras: end -->
 </head>
 <body>
 
@@ -306,7 +336,7 @@
           <div class="entire"><h3 id="figures">Figures</h3></div>
 
           <div class="entire">
-            <a href="img/green-background-seven-figures.png">
+            <a href="paintings/green-background-seven-figures/" data-full="img/green-background-seven-figures.png">
             <picture>
               <source 
                 srcset="
@@ -341,7 +371,7 @@
           <div class="entire"><h3 id="abstracts">Abstracts</h3></div>
 
           <div class="landscape">
-            <a href="img/blue.png">
+            <a href="paintings/blue/" data-full="img/blue.png">
               <picture>
                 <source 
                   srcset="
@@ -377,7 +407,7 @@
           </div>
 
           <div class="landscape">
-            <a href="img/red-thick-border.png">
+            <a href="paintings/red-thick-border/" data-full="img/red-thick-border.png">
               <picture>
                 <source 
                   srcset="
@@ -413,7 +443,7 @@
           </div>
           
           <div class="landscape">
-            <a href="img/purple.png">
+            <a href="paintings/purple/" data-full="img/purple.png">
               <picture>
                 <source 
                   srcset="
@@ -449,7 +479,7 @@
           </div>
           
           <div class="landscape">
-            <a href="img/abstract-collaboration-with-teo-1.png">
+            <a href="paintings/abstract-collaboration-with-teo-1/" data-full="img/abstract-collaboration-with-teo-1.png">
               <picture>
                 <source 
                   srcset="
@@ -485,7 +515,7 @@
           </div>
 
           <div class="landscape">
-            <a href="img/abstract-collaboration-with-teo-2.png">
+            <a href="paintings/abstract-collaboration-with-teo-2/" data-full="img/abstract-collaboration-with-teo-2.png">
               <picture>
                 <source 
                   srcset="
@@ -521,7 +551,7 @@
           </div>
           
           <div class="landscape">
-            <a href="img/abstract-collaboration-with-teo-3.png">
+            <a href="paintings/abstract-collaboration-with-teo-3/" data-full="img/abstract-collaboration-with-teo-3.png">
               <picture>
                 <source 
                   srcset="
@@ -561,7 +591,7 @@
           <div class="entire"><h3 id="plein-air">Plein Air</h3></div>
 
           <div class="landscape">
-            <a href="img/seascape-2018.png">
+            <a href="paintings/seascape-2018/" data-full="img/seascape-2018.png">
               <picture>
                 <source 
                   srcset="
@@ -597,7 +627,7 @@
           </div>
 
           <div class="landscape">
-            <a href="img/mont-sainte-victoire-a.png">
+            <a href="paintings/mont-sainte-victoire-a/" data-full="img/mont-sainte-victoire-a.png">
               <picture>
                 <source 
                   srcset="
@@ -633,7 +663,7 @@
           </div>
           
           <div class="portrait">
-            <a href="img/granada-cjon-de-las-tomasas.png">
+            <a href="paintings/granada-cjon-de-las-tomasas/" data-full="img/granada-cjon-de-las-tomasas.png">
               <picture>
                 <source 
                   srcset="
@@ -667,7 +697,7 @@
           </div>
           
           <div class="portrait">
-            <a href="img/milan-ponte-alda-merini.png">
+            <a href="paintings/milan-ponte-alda-merini/" data-full="img/milan-ponte-alda-merini.png">
               <picture>
                 <source 
                   srcset="
@@ -701,7 +731,7 @@
           </div>
 
           <div class="portrait">
-            <a href="img/brussels-nighttime-street.png">
+            <a href="paintings/brussels-nighttime-street/" data-full="img/brussels-nighttime-street.png">
               <picture>
                 <source 
                   srcset="
@@ -735,7 +765,7 @@
           </div>
 
           <div class="landscape">
-            <a href="img/porthmadog.png">
+            <a href="paintings/porthmadog/" data-full="img/porthmadog.png">
               <picture>
                 <source 
                   srcset="
@@ -774,7 +804,7 @@
           <div class="entire"><h3 id="still-life">Still Life</h3></div>
           
           <div class="landscape">
-            <a href="img/webp/apple-1-full.webp">
+            <a href="paintings/apple-1/" data-full="img/webp/apple-1-full.webp">
               <picture>
                 <source 
                   srcset="
@@ -810,7 +840,7 @@
           </div>
 
           <div class="landscape">
-            <a href="img/webp/apple-2-full.webp">
+            <a href="paintings/apple-2/" data-full="img/webp/apple-2-full.webp">
               <picture>
                 <source 
                   srcset="
@@ -1035,5 +1065,39 @@
       }, 800);
     });
     </script>
+    <!-- make_pages.py extras: start (rebuilt on every run; edit the script, not this block) -->
+  <script>
+    /* Show the logo already finished (when html.logo-still is set): jump any
+       SVG (SMIL) animation to its end and finish any CSS animation. */
+    (function () {
+      var root = document.documentElement;
+      if (!root.classList.contains('logo-still')) return;
+      var obj = document.querySelector('.header object');
+      function reveal() { root.classList.add('logo-ready'); }
+      if (!obj) return reveal();
+      function finish() {
+        try {
+          var doc = obj.contentDocument, svg = doc && doc.documentElement;
+          if (svg) {
+            if (svg.pauseAnimations) { svg.pauseAnimations(); svg.setCurrentTime(3600); }
+            var st = doc.createElementNS('http://www.w3.org/2000/svg', 'style');
+            st.textContent = '*{animation-delay:-3600s!important;' +
+              'animation-play-state:paused!important;transition:none!important}';
+            svg.appendChild(st);
+          }
+        } catch (e) {}
+        reveal();
+      }
+      /* Act only once the real logo file has loaded, not the blank
+         placeholder document the browser shows before it. */
+      var d = null;
+      try { d = obj.contentDocument; } catch (e) {}
+      if (d && d.readyState === 'complete' && d.documentElement &&
+          d.documentElement.localName === 'svg') finish();
+      else obj.addEventListener('load', finish);
+      setTimeout(reveal, 1500);   /* never leave the logo hidden */
+    })();
+  </script>
+  <!-- make_pages.py extras: end -->
   </body>
 </html>
