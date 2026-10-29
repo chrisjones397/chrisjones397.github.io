@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-  <link rel="preload" href="med/water.mp4" as="video">
+  <link rel="stylesheet" href="face/face.css">
   <style>
     /* Fundamentals */
     * {
@@ -26,11 +26,10 @@
       /* This variable will be set by JavaScript */
       --header-height: 180px; /* Fallback value for non-JS browsers or initial load */
     }
-    
     html {
       scroll-behavior: smooth;
       scrollbar-gutter: stable;
-      scroll-padding-top: calc(var(--header-height) - 3rem); 
+      scroll-padding-top: calc(var(--header-height) - 3rem);
     }
     @media screen and (prefers-reduced-motion: reduce) {
       html {
@@ -38,30 +37,24 @@
       }
     }
     body, html {
-      margin: 0;
-      padding: 0;
-      color:#fff;
-      background: #000;
+      color: #fff;
       font-family: "Inter", sans-serif;
       background-color: rgb(100, 100, 100);
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-attachment: fixed;
-      background-position: center center;
     }
-    /* Header */
     ul {
-      list-style: none; 
+      list-style: none;
     }
     a {
       text-decoration: none;
       color: inherit;
     }
+
+    /* Header */
     .header {
       background-color: rgba(255,255,255,0.4);
       backdrop-filter: saturate(140%) blur(10px);
       -webkit-backdrop-filter: saturate(140%) blur(10px);
-      border-bottom: 1px  rgba(255, 255, 255, 0.4) solid;
+      border-bottom: 1px rgba(255, 255, 255, 0.4) solid;
       position: fixed;
       top: 0;
       z-index: 1000;
@@ -74,58 +67,7 @@
       justify-content: space-between;
       max-width: 1200px;
       margin: 0 auto;
-      /* padding: 0 120px; */
-      padding: 0 20px; /* smaller padding */
-    }
-    @media(max-width: 720px) {
-      .header-block {
-        flex-direction: column;
-        padding: 30px 0;
-        row-gap: 20px;
-      }
-      .gallery-block {
-        padding: 0 10px; /* reduce padding even more on mobile */
-      }
-      .wrapper {
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      }
-    }
-    /* Desktop: keep the special layout */
-    @media (min-width: 900px) {
-      .gallery-block { padding: 0 120px; }              /* your original desktop padding is fine */
-      .wrapper { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-      /* .a { grid-column: 1 / 3; grid-row: 1 / 3; }
-      .h { grid-column: 3; grid-row: 2 / 4; }
-      .i { grid-column: 2; grid-row: 2 / 4; } */
-    }
-    /* Tablet */
-    @media (max-width: 899px) and (min-width: 541px) {
-      .gallery-block { padding: 0 24px; }
-      .wrapper { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      /* kill manual placement so items flow naturally */
-      .a, .g { grid-column: auto !important; grid-row: auto !important; }
-    }
-    @media (max-width: 720px) {
-      .nav-link object {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        position: relative;
-        left: 8%;   /* shift right a bit */
-      }
-    }
-    /* Phones */
-    @media (max-width: 540px) {
-      main {
-        margin-top: 220px !important;
-      }
-      .gallery-block { padding: 0 12px; }
-      .wrapper { grid-template-columns: 1fr; }
-      .a, .g { grid-column: auto !important; grid-row: auto !important; }
-    }
-    .logo-img {
-      display: block;
-      /* max-height: 32px; */
+      padding: 0 20px;
     }
     .nav-list {
       display: flex;
@@ -136,151 +78,170 @@
       color: rgba(255,255,255,0.6);
       transition: 0.4s;
     }
-    .nav-link object{
+    .nav-link object {
       height: 6rem;
     }
     .nav-link:hover,
     .nav-link:focus {
       color: rgba(255,255,255,1);
     }
-    /* Main Sections */
-    /* Update this to apply the margin-top to the main content wrapper */
-    main {
-      margin-top: var(--header-height);
+
+    /* Thick-glass header over the opening image (drawn by glass.js) */
+    .glass-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
     }
-    section#gallery,section#water {
-      /* padding: 120px 0px 60px 0px; */
+    .header-block {
+      position: relative;
+      z-index: 1;
+    }
+    .header.glass-on {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    /* Opening image: full window width, starting under the see-through header */
+    .hero {
+      position: relative;
+    }
+    .hero img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 100vh;
+      object-fit: cover;
+    }
+    .hero-title {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 22%;   /* measured from the bottom, so a title that wraps onto two lines still fits */
+      padding: 0 5vw;
+      text-align: center;
+      font-size: clamp(1.6rem, 4.5vw, 4.2rem);
+      font-weight: 300;
+      letter-spacing: 0.01em;
+      text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
+    }
+
+    /* Profile text */
+    .face-words h2 {
+      margin-bottom: 0.8em;
+    }
+    .face-words p {
+      line-height: 1.5;
+    }
+    .face-words p + p {
+      margin-top: 0.9em;
+    }
+
+    /* Footer, as on the painting pages */
+    .site-footer {
+      max-width: 1200px;
+      margin: 3rem auto 0;
+      padding: 1.5rem 20px 2.5rem;
+      border-top: 1px solid rgba(255,255,255,0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.75);
+    }
+    .site-footer a { display: inline-flex; color: rgba(255,255,255,0.75); transition: 0.3s; }
+    .site-footer a:hover, .site-footer a:focus { color: rgba(255,255,255,1); }
+
+    /* Gallery */
+    section#gallery {
       min-height: 100vh;
     }
     .gallery-block {
       align-items: center;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 20px; /* smaller padding */
+      padding: 0 20px;
     }
-    /* Water */
-    section#water {
-      margin-top: 3rem;
-      height: 600vh;
-      position: relative;
-    }
-    /* Ensure the sticky container is in the normal flow and has a defined scroll-range */
-    .water-block {
-        position: sticky; /* Make the block stick to the viewport */
-        top: 0; /* The sticky effect activates when the top of the element reaches the top of the viewport */
-        width: 100%;
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        font-weight: bold;
-        color: #fff;
-        overflow: hidden; /* This crops any part of the video that extends beyond the container */
-    }
-    .water-block video {
-      position: absolute; /* The video should be positioned absolutely within its container */
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: 50% 0%;
-      z-index: -1; /* Place the video behind the overlay content */
-    }
-    /* Position the overlays absolutely within the sticky section */
-    .intro__story {
-        position: absolute; /* The overlays are positioned absolutely inside the sticky section */
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%; /* Make the overlay container fill the entire sticky section */
-        color: white;
-        z-index: 1; /* Place the overlay content in front of the video */
-        pointer-events: none; /* Allow mouse events to pass through the overlay to the elements below (optional) */
-    }
-
-    /* Position and style the individual story blocks within the overlay */
-    .story-block {
-        height: 100vh; /* Adjust height based on how long you want each block to be visible */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 0 10%;
-        pointer-events: auto; /* Re-enable pointer events for the content you want to interact with */
-    }
-
-    /* Ensure the inner text is visible */
-    .story-inner {
-        max-width: 60ch;
-        opacity: 0;
-        transition: opacity 0.3s linear;
-    }
-    .story-inner h1 {
-      font-size: 2.5em;
-      margin-bottom: 0.8em;
-    }
-
-    .story-inner p {
-      font-size: 1.2em;
-      line-height: 1.6;
-      margin: 0;
-    }
-    /* Grid Layout for Gallery */
     .wrapper {
-      /* max-width: 940px; */
       margin: 0 auto;
-    }
-    .wrapper > div {
-      border: 1px solid rgb(255 255 250 / 50%);
-      border-radius: 5px;
-      /* background-color: rgb(233 171 88 / 50%); */
-      padding: 1em;
-      /* color: #d9480f; */
-    }
-    .wrapper > div img{
-      max-width: 100%;
-      height: auto;
-    }
-    .wrapper {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* responsive columns */
       gap: 10px;
       grid-auto-rows: auto; /* let height be flexible */
     }
     .wrapper > div {
+      border: 1px solid rgb(255 255 250 / 50%);
+      border-radius: 5px;
+      padding: 1em;
       display: flex;
       flex-direction: column;
       align-items: center;
+    }
+    .wrapper > div img {
+      max-width: 100%;
+      height: auto;
     }
     .wrapper > div p {
       color: white;
       text-align: center;
       margin-top: 0.5em;
-      font-size: 0.9rem; /* optional, make caption smaller */
+      font-size: 0.9rem; /* make captions smaller */
     }
     .wrapper > div.entire:has(> a) {
-      border: none; 
+      border: none;
     }
-
-    /* Grid Arrangement */
-    .a {
-      /* grid-column: 1 ;
-      grid-row: 1 / 2; */
-    }
-    .g {
-      /* grid-column: 3;
-      grid-row: 2 / 4; */
-    }.entire {
+    .entire {
       grid-column: 1 / -1;
     }
-
     .portrait {
       grid-row: span 2; /* Span two rows for portrait images */
     }
     .landscape {
       grid-row: span 1 !important; /* Span one row for landscape images */
+    }
+
+    /* Desktop */
+    @media (min-width: 900px) {
+      .gallery-block { padding: 0 120px; }
+      .wrapper { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    /* Tablet */
+    @media (max-width: 899px) and (min-width: 541px) {
+      .gallery-block { padding: 0 24px; }
+      .wrapper { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    /* Narrow windows: header stacks, logo centred */
+    @media (max-width: 720px) {
+      .header-block {
+        flex-direction: column;
+        padding: 30px 0;
+        row-gap: 20px;
+      }
+      .nav-link object {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        position: relative;
+        left: 8%;   /* shift right a bit */
+      }
+      .gallery-block {
+        padding: 0 10px;
+      }
+      .wrapper {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      }
+    }
+    /* Phones */
+    @media (max-width: 540px) {
+      .gallery-block { padding: 0 12px; }
+      .wrapper { grid-template-columns: 1fr; }
+    }
+    /* Tall windows (phones): the opening image fills most of the screen, trimmed at the sides */
+    @media (max-aspect-ratio: 1/1) {
+      .hero img { height: 80vh; height: 80svh; }
     }
   </style>
   <!-- make_pages.py extras: start (rebuilt on every run; edit the script, not this block) -->
@@ -326,6 +287,52 @@
   </header>
   
   <main id="main-content">
+
+    <!-- Opening image -->
+    <section class="hero">
+      <picture>
+        <source
+          srcset="
+            med/webp/forest-1024.webp 1024w,
+            med/webp/forest-1536.webp 1536w,
+            med/webp/forest-2560.webp 2560w,
+            med/webp/forest-3840.webp 3840w
+          "
+          type="image/webp"
+          sizes="100vw">
+        <img
+          src="med/jpg/forest-1536.jpg"
+          srcset="
+            med/jpg/forest-1024.jpg 1024w,
+            med/jpg/forest-1536.jpg 1536w,
+            med/jpg/forest-2560.jpg 2560w,
+            med/jpg/forest-3840.jpg 3840w
+          "
+          sizes="100vw"
+          alt="Woodland with bracken in evening light"
+          fetchpriority="high">
+      </picture>
+      <h1 class="hero-title">Fine art in oil, watercolour, and pastel</h1>
+    </section>
+
+    <!-- Profile -->
+    <section class="face-section">
+      <div class="face-stage">
+        <div class="face-words">
+          <h2>Profile</h2>
+          <p>
+            I paint in oils, watercolours, and pastels, from observation, and into abstraction. 
+            I work between London, Hertfordshire, and Bedfordshire.
+          </p>
+          <p>
+            Away from the easel, I studied mathematics at the University of Warwick and then the University of 
+            Cambridge before embarking on a career in data analysis. I volunteer for the RSPB 
+            and spend as much time at their reserves as possible.
+          </p>
+          <p> I'm passionate about progressive, experimental, alternative comedy.</p>
+        </div>
+      </div>
+    </section>
 
     <!-- Gallery -->
     <section id="gallery">
@@ -879,225 +886,50 @@
       </div>
     </section>
 
-    <!-- Water -->
-    <section id="water">
-      <div class="water-block">
-        <video autoplay muted playsinline webkit-playsinline preload="auto">
-          <source src="med/water.mp4" type="video/mp4">
-        </video>
-      </div>
-      <div class="intro__story">
-        <div class="story-block"><div class="story-inner"><h1>Intro 1</h1><p>First intro block.</p></div></div>
-        <div class="story-block"><div class="story-inner"><h1>Intro 2</h1><p>Second intro block.</p></div></div>
-        <div class="story-block"><div class="story-inner"><h1>Intro 3</h1><p>Third intro block.</p></div></div>
-        <div class="story-block"><div class="story-inner"><h1>Intro 4</h1><p>Fourth intro block.</p></div></div>
-        <div class="story-block"><div class="story-inner"><h1>Intro 5</h1><p>Fifth intro block.</p></div></div>
-      </div>
-    </section>
-
   </main>
 
-  <script>
-    const MAX_OPACITY = 0.75;
-    const SCRUB_DAMPING = 0.1;
+  <footer class="site-footer">
+    <p><a href="https://www.instagram.com/only1jones2/" aria-label="Instagram: only1jones2" title="Instagram"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.3" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.6" r="1.2" fill="currentColor"/></svg></a></p>
+    <p>&copy;2026 Christopher Jones</p>
+  </footer>
 
-    // NEW: Parameterised scrubbing FPS (change this value to adjust CPU load)
-    const SCRUB_FPS = 30; // Match your video or tweak (e.g., 15, 24, 30)
-    const SCRUB_INTERVAL = 1000 / SCRUB_FPS;
-    const FINAL_SNAP_DURATION = 200;
-
-    const active = new Set();
-
-    // Fade Observer
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        const block = entry.target;
-        const inner = block.querySelector('.story-inner');
-        if (!inner) return;
-        if (entry.isIntersecting) {
-          active.add(block);
-        } else {
-          inner.style.opacity = '0';
-          active.delete(block);
-        }
-      });
-    }, { rootMargin: '30% 0px 30% 0px', threshold: 0 });
-
-    document.querySelectorAll('.story-block').forEach(b => io.observe(b));
-
-    function updateOpacity() {
-      const vh = window.innerHeight;
-      const topBand = 0.20 * vh;
-      const bottomBand = 0.80 * vh;
-
-      active.forEach(block => {
-        const inner = block.querySelector('.story-inner');
-        if (!inner) return;
-
-        const rect = inner.getBoundingClientRect();
-        const top = rect.top;
-        const bottom = rect.bottom;
-        let opacity = 0;
-
-        if (bottom <= 0 || top >= vh) {
-          opacity = 0;
-        } else {
-          if (bottom > bottomBand) {
-            const progressIn = Math.min(Math.max((vh - bottom) / (vh - bottomBand), 0), 1);
-            opacity = MAX_OPACITY * progressIn;
-          } else if (top < topBand) {
-            const progressOut = Math.min(Math.max(top / topBand, 0), 1);
-            opacity = MAX_OPACITY * progressOut;
-          } else {
-            opacity = MAX_OPACITY;
-          }
-        }
-        inner.style.opacity = opacity.toFixed(3);
-      });
-    }
-
-    // Smooth scrubbing with FPS throttling
-    const scrubTargets = new Map();
-    const sections = document.querySelectorAll('section');
-    let lastScrubUpdate = 0;
-
-    function updateScrubTargets() {
-      const scrollY = window.scrollY;
-      const vh = window.innerHeight;
-
-      sections.forEach(section => {
-        const video = section.querySelector('.water-block video');
-        if (!video || !video.duration) return;
-
-        const rect = section.getBoundingClientRect();
-        const sectionTop = rect.top + scrollY;
-        const sectionHeight = section.offsetHeight;
-        const start = sectionTop;
-        const end = sectionTop + sectionHeight - vh;
-
-        const progress = Math.min(Math.max((scrollY - start) / (end - start), 0), 1);
-        scrubTargets.set(video, video.duration * progress);
-      });
-    }
-
-    let scrubActive = false;
-    let scrollStopTimeout;
-    const SCRUB_SNAP_EPS = 1 / SCRUB_FPS; // seconds; about one frame at your scrub FPS
-
-    function smoothScrub(timestamp) {
-      if (timestamp - lastScrubUpdate >= SCRUB_INTERVAL) {
-        scrubTargets.forEach((target, video) => {
-          if (!video.duration) return;
-          const diff = target - video.currentTime;
-          const adiff = Math.abs(diff);
-
-          if (adiff <= SCRUB_SNAP_EPS * 2) { // Allow for a slightly larger snap window
-            video.currentTime = target;
-          } else {
-            video.currentTime += diff * SCRUB_DAMPING;
-          }
-        });
-        lastScrubUpdate = timestamp;
-      }
-      if (scrubActive) requestAnimationFrame(smoothScrub);
-    }
-
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          updateOpacity();
-          updateScrubTargets();
-          ticking = false;
-        });
-        ticking = true;
-      }
-
-      if (!scrubActive) {
-        scrubActive = true;
-        requestAnimationFrame(smoothScrub);
-      }
-      clearTimeout(scrollStopTimeout);
-      scrollStopTimeout = setTimeout(() => {
-        scrubActive = false;
-
-        // Final, smoother snap using a short-lived loop
-        let start = null;
-        const finalLoop = (timestamp) => {
-          if (!start) start = timestamp;
-          const elapsed = timestamp - start;
-          const progress = Math.min(elapsed / FINAL_SNAP_DURATION, 1);
-
-          scrubTargets.forEach((target, video) => {
-            if (!video || !video.duration) return;
-            const current = video.currentTime;
-            // Interpolate smoothly to the final target
-            video.currentTime = current + (target - current) * progress;
-          });
-
-          if (progress < 1) {
-            requestAnimationFrame(finalLoop);
-          } else {
-            // Once the final loop is complete, ensure it's snapped exactly
-            scrubTargets.forEach((target, video) => {
-              if (!video || !video.duration) return;
-              video.currentTime = target;
-            });
-          }
-        };
-        requestAnimationFrame(finalLoop);
-      }, 150);
-    });
-
-    window.addEventListener('resize', () => {
-      updateOpacity();
-      updateScrubTargets();
-    });
-
-    window.addEventListener('load', () => {
-        document.querySelectorAll('video').forEach(v => {
-          v.pause();
-          v.currentTime = 0;
-      });
-      setTimeout(() => {
-        updateOpacity();
-        updateScrubTargets();
-      }, 800);
-    });
-    </script>
     <!-- make_pages.py extras: start (rebuilt on every run; edit the script, not this block) -->
-  <script>
-    /* Show the logo already finished (when html.logo-still is set): jump any
-       SVG (SMIL) animation to its end and finish any CSS animation. */
-    (function () {
-      var root = document.documentElement;
-      if (!root.classList.contains('logo-still')) return;
-      var obj = document.querySelector('.header object');
-      function reveal() { root.classList.add('logo-ready'); }
-      if (!obj) return reveal();
-      function finish() {
-        try {
-          var doc = obj.contentDocument, svg = doc && doc.documentElement;
-          if (svg) {
-            if (svg.pauseAnimations) { svg.pauseAnimations(); svg.setCurrentTime(3600); }
-            var st = doc.createElementNS('http://www.w3.org/2000/svg', 'style');
-            st.textContent = '*{animation-delay:-3600s!important;' +
-              'animation-play-state:paused!important;transition:none!important}';
-            svg.appendChild(st);
-          }
-        } catch (e) {}
-        reveal();
-      }
-      /* Act only once the real logo file has loaded, not the blank
-         placeholder document the browser shows before it. */
-      var d = null;
-      try { d = obj.contentDocument; } catch (e) {}
-      if (d && d.readyState === 'complete' && d.documentElement &&
-          d.documentElement.localName === 'svg') finish();
-      else obj.addEventListener('load', finish);
-      setTimeout(reveal, 1500);   /* never leave the logo hidden */
-    })();
-  </script>
+    <script>
+      /* Show the logo already finished (when html.logo-still is set): jump any
+        SVG (SMIL) animation to its end and finish any CSS animation. */
+      (function () {
+        var root = document.documentElement;
+        if (!root.classList.contains('logo-still')) return;
+        var obj = document.querySelector('.header object');
+        function reveal() { root.classList.add('logo-ready'); }
+        if (!obj) return reveal();
+        function finish() {
+          try {
+            var doc = obj.contentDocument, svg = doc && doc.documentElement;
+            if (svg) {
+              if (svg.pauseAnimations) { svg.pauseAnimations(); svg.setCurrentTime(3600); }
+              var st = doc.createElementNS('http://www.w3.org/2000/svg', 'style');
+              st.textContent = '*{animation-delay:-3600s!important;' +
+                'animation-play-state:paused!important;transition:none!important}';
+              svg.appendChild(st);
+            }
+          } catch (e) {}
+          reveal();
+        }
+        /* Act only once the real logo file has loaded, not the blank
+          placeholder document the browser shows before it. */
+        var d = null;
+        try { d = obj.contentDocument; } catch (e) {}
+        if (d && d.readyState === 'complete' && d.documentElement &&
+            d.documentElement.localName === 'svg') finish();
+        else obj.addEventListener('load', finish);
+        setTimeout(reveal, 1500);   /* never leave the logo hidden */
+      })();
+    </script>
   <!-- make_pages.py extras: end -->
+      
+  <script type="module" src="face/face.js"></script>
+  <script src="glass.js"></script>
+
   </body>
 </html>
