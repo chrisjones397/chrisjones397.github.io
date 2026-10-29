@@ -69,9 +69,20 @@ const tnF = Math.tan(THREE.MathUtils.degToRad(FOV / 2));
 const winW = () => stage.clientWidth, winH = () => stage.clientHeight;
 // the head stays in the left part of the layout; only on windows taller than wide (text underneath) is it centred
 const shiftFor = (w, h) => SHIFT * smooth(clamp01((w / h - 0.8) / 0.2));
+// The head is framed in the band between the site's header and the bottom of the window; on windows
+// taller than wide the profile text sits underneath, so the band stops just above the text.
+const siteHeader = document.querySelector('.header'), wordsEl = document.querySelector('.face-words');
+function band(w, h) {
+  const tall = 1 - smooth(clamp01((w / h - 0.8) / 0.2));
+  // on phones the header slims while you scroll (header.js), so frame the head below the slim header
+  const top = siteHeader ? Math.min(Number(siteHeader.dataset.compactHeight) || siteHeader.offsetHeight, 0.4 * h) : 0;
+  const below = wordsEl ? wordsEl.offsetTop - 0.03 * h : h;
+  const bottom = lerp(h, Math.max(below, top + 0.26 * h), tall);
+  return { room: (bottom - top) / h, lift: h / 2 - (top + bottom) / 2 };
+}
 function camDistance(w, h) {
   const fitW = (0.5 / (1 - 2 * shiftFor(w, h))) / (tnF * w / h);                   // room for the shift on wide windows
-  return Math.max((ASPECT / 2) / tnF / FRAME_FILL, fitW / FRAME_FILL);
+  return Math.max((ASPECT / 2) / tnF / (FRAME_FILL * band(w, h).room), fitW / FRAME_FILL);
 }
 const CAM_D = camDistance(winW(), winH());
 const VIEW_ASPECT = winW() / winH(), VIEW_SHIFT = shiftFor(winW(), winH());
@@ -81,7 +92,7 @@ function fit() {
   camera.aspect = w / h;
   // the camera never moves; if the window changes shape, the lens adjusts so the head keeps its size
   camera.fov = 2 * THREE.MathUtils.radToDeg(Math.atan(tnF * camDistance(w, h) / CAM_D));
-  camera.setViewOffset(w, h, shiftFor(w, h) * w, 0, w, h);                        // head to the left on wide windows
+  camera.setViewOffset(w, h, shiftFor(w, h) * w, band(w, h).lift, w, h);         // head to the left on wide windows, above the text on tall ones
   camera.updateProjectionMatrix();
   pointMat.uniforms.uScale.value = h / 900 * Math.min(devicePixelRatio, 2);
   if (tShown >= 0) frame(tShown);
@@ -420,6 +431,7 @@ function tick(now) {
   requestAnimationFrame(tick);
 }
 addEventListener('resize', fit); fit();
+if (window.ResizeObserver) { const ro = new ResizeObserver(() => fit()); if (wordsEl) ro.observe(wordsEl); }
 window.__T_DONE = T_DONE; window.__frame = t => { tShown = t; frame(t); };
 window.__times = { T_WHIRL, T_ARRIVE, T_MOVE, T_MOVED, T_BUILD, T_DONE };
 if (frozen !== null) window.__frame(frozen); else requestAnimationFrame(tick);

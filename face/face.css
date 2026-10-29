@@ -1,12 +1,11 @@
-/* The face section */
-  html, body { margin: 0; background: rgb(100, 100, 100); color: #fff; font-family: system-ui, sans-serif; }
-
-  /* The face section. Its height sets how much scrolling the animation takes (400vh = four screens).
-     The drawing stays in place, filling the window, while the section scrolls past. */
-  .face-section { position: relative; height: 400vh; }
-  .face-stage { position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; }
-  .face-stage canvas { position: absolute; inset: 0; display: block; }
-  .face-words { position: absolute; z-index: 1; right: 8vw; top: 50%; transform: translateY(-50%); width: 34vw; }
-  @media (max-aspect-ratio: 1/1) { .face-words { left: 8vw; right: 8vw; width: auto; top: auto; bottom: 6vh; transform: none; } }
-
-  .after { padding: 20vh 10vw; min-height: 100vh; }
+/* The face section. Its height sets how much scrolling the animation takes (400vh = four screens).
+   The drawing stays in place, filling the window, while the section scrolls past. */
+.face-section { position: relative; height: 400vh; }
+.face-stage { position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; }
+.face-stage canvas { position: absolute; inset: 0; display: block; }
+.face-words { position: absolute; z-index: 1; right: 8vw; top: 50%; transform: translateY(-50%); width: 34vw; }
+/* Windows taller than wide: the text sits at the bottom, below the head, a little smaller on short screens */
+@media (max-aspect-ratio: 1/1) {
+  .face-words { left: 7vw; right: 7vw; width: auto; top: auto; bottom: 4vh; transform: none;
+                font-size: clamp(0.75rem, min(3.7vw, 1.95vh), 1rem); }
+}

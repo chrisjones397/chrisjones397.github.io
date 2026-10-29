@@ -107,13 +107,14 @@
     /* Opening image: full window width, starting under the see-through header */
     .hero {
       position: relative;
+      overflow: hidden;   /* the title drifts down with the scroll; it stays within the picture */
     }
     .hero img {
       display: block;
       width: 100%;
-      height: auto;
-      max-height: 100vh;
-      object-fit: cover;
+      height: 100vh;
+      height: 100svh;     /* fills the window exactly (on phones, with the browser's bars showing) */
+      object-fit: cover;  /* trimmed at the sides or top and bottom to fit */
     }
     .hero-title {
       position: absolute;
@@ -227,6 +228,14 @@
         position: relative;
         left: 8%;   /* shift right a bit */
       }
+      /* Phones: the header slims to the logo bar while scrolling down (header.js) */
+      .header-block { transition: padding 0.35s ease, row-gap 0.35s ease; }
+      .nav-link object { transition: height 0.35s ease; }
+      .nav { max-height: 3rem; overflow: hidden; transition: max-height 0.35s ease, opacity 0.25s ease; }
+      .header.compact .header-block { min-height: 0; padding: 8px 0; row-gap: 0; }
+      .header.compact .nav-link object { height: 3rem; }
+      .header.compact .nav { max-height: 0; opacity: 0; pointer-events: none; }
+      .header.no-anim, .header.no-anim * { transition: none !important; }
       .gallery-block {
         padding: 0 10px;
       }
@@ -238,10 +247,6 @@
     @media (max-width: 540px) {
       .gallery-block { padding: 0 12px; }
       .wrapper { grid-template-columns: 1fr; }
-    }
-    /* Tall windows (phones): the opening image fills most of the screen, trimmed at the sides */
-    @media (max-aspect-ratio: 1/1) {
-      .hero img { height: 80vh; height: 80svh; }
     }
   </style>
   <!-- make_pages.py extras: start (rebuilt on every run; edit the script, not this block) -->
@@ -929,7 +934,9 @@
   <!-- make_pages.py extras: end -->
       
   <script type="module" src="face/face.js"></script>
+  <script src="header.js"></script>
   <script src="glass.js"></script>
+  <script src="motion.js"></script>
 
   </body>
 </html>
