@@ -20,11 +20,7 @@
       box-sizing: border-box;
     }
     :root {
-      --highlight-color: rgb(200,200,200);
-      --primary-color: rgb(100,100,100);
-      --secondary-color: rgb(100,100,200);
-      /* This variable will be set by JavaScript */
-      --header-height: 180px; /* Fallback value for non-JS browsers or initial load */
+      --header-height: 180px; /* room kept above a section when a menu link jumps to it (see scroll-padding-top) */
     }
     html {
       scroll-behavior: smooth;
@@ -129,6 +125,14 @@
       text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
     }
 
+    /* The menu's Profile link lands at the end of the profile animation, on the finished head and text
+       (with smooth scrolling, the animation fast-forwards on the way there) */
+    .face-anchor {
+      position: absolute;
+      top: calc(100% - 100vh);
+      left: 0;
+    }
+
     /* Profile text */
     .face-words h2 {
       margin-bottom: 0.8em;
@@ -161,7 +165,6 @@
       min-height: 100vh;
     }
     .gallery-block {
-      align-items: center;
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 20px;
@@ -186,7 +189,6 @@
       height: auto;
     }
     .wrapper > div p {
-      color: white;
       text-align: center;
       margin-top: 0.5em;
       font-size: 0.9rem; /* make captions smaller */
@@ -199,9 +201,6 @@
     }
     .portrait {
       grid-row: span 2; /* Span two rows for portrait images */
-    }
-    .landscape {
-      grid-row: span 1 !important; /* Span one row for landscape images */
     }
 
     /* Desktop */
@@ -282,10 +281,9 @@
       <a href="#" class="nav-link"><object type="image/svg+xml" data="med/chris-jones-org-uk-animated.svg"></object></a>
       <nav class="nav">
         <ul class="nav-list">
-          <li><a href="#figures" class="nav-link">Figures</a></li>
-          <li><a href="#abstracts" class="nav-link">Abstracts</a></li>
-          <li><a href="#plein-air" class="nav-link">Plein&nbsp;Air</a></li>
-          <li><a href="#still-life" class="nav-link">Still&nbsp;Life</a></li>
+          <li><a href="#profile" class="nav-link">Profile</a></li>
+          <li><a href="#gallery" class="nav-link">Gallery</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
         </ul>
       </nav>
     </div>
@@ -322,6 +320,7 @@
 
     <!-- Profile -->
     <section class="face-section">
+      <span id="profile" class="face-anchor"></span>
       <div class="face-stage">
         <div class="face-words">
           <h2>Profile</h2>
@@ -893,7 +892,7 @@
 
   </main>
 
-  <footer class="site-footer">
+  <footer id="contact" class="site-footer">
     <p><a href="https://www.instagram.com/only1jones2/" aria-label="Instagram: only1jones2" title="Instagram"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.3" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.6" r="1.2" fill="currentColor"/></svg></a></p>
     <p>&copy;2026 Christopher Jones</p>
   </footer>

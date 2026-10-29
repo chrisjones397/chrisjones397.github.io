@@ -5,9 +5,6 @@ const here = name => new URL(name, import.meta.url).href;   // files sit next to
 /* ================= Settings you might want to tweak ================= */
 const SEA_TIME     = 4.5;   // calm sea before anything lifts
 const SEA_Y        = -1.0;  // height of the sea below the head
-const SEA_WIDTH    = 4.2;   // half-width of the sea
-const SEA_NEAR     = 1.6;   // nearest edge of the sea
-const SEA_FAR      = -20;   // far edge, towards the horizon
 const HAZE         = 6;     // distance over which the sea fades into the grey
 const WAVE_HEIGHT  = 0.03;  // small waves
 const WHIRL_SPREAD = 2.2;   // the sea lifts from the centre outwards over this many seconds
@@ -21,15 +18,16 @@ const STAGE_GAP    = 0.30;  // how far behind each stage follows the one before 
 const BAND         = 0.20;  // width of each soft transition band
 const LAND         = 0.28;  // how long (in the same units) a triangle takes to fly in and land
 const FLY          = 0.35;  // how far triangles fly in from
-const FRAME_FILL   = 0.82;  // how much of the window's height the finished head fills
-const SHIFT        = 0.20;  // on wide windows the head sits this far left of centre (fraction of the width)
+const FRAME_FILL   = 0.82;  // sets the camera's distance, and so how strong the perspective is
+const SHIFT_TALL   = 0.08;  // when stacked, the head sits this far left of centre (fraction of the width), facing into the space
+const MOVE_SLOW    = 2.0;   // the measured head movement plays this many times slower than it was filmed
+const BUILD_LEAD   = 1.0;   // the triangles start arriving this many seconds after the movement starts
 const PLAY         = 0.85;  // the animation plays over this much of the section's scroll; the rest holds the finished head
 const R_SWIRL      = 1.2;   // points this close to the head make the full turns; further ones curl more gently
 
 /* ================= Helpers ================= */
 const clamp01 = v => Math.min(Math.max(v, 0), 1);
 const smooth = v => v * v * (3 - 2 * v);
-const easeInOut = v => v < 0.5 ? 4 * v * v * v : 1 - Math.pow(-2 * v + 2, 3) / 2;
 const lerp = (a, b, v) => a + (b - a) * v;
 const ramp = (t, a, d) => clamp01((t - a) / d);
 
@@ -47,11 +45,13 @@ const frozen = params.has('t') ? parseFloat(params.get('t')) : null;
 const T_WHIRL  = SEA_TIME;
 const T_ARRIVE = T_WHIRL + WHIRL_SPREAD + WHIRL_TIME;
 const T_MOVE   = T_ARRIVE + HOLD;
-const T_MOVED  = T_MOVE + (NF - 1) / FPS;
-const T_BUILD  = T_MOVED + SETTLE;
+const T_MOVED  = T_MOVE + (NF - 1) / FPS * MOVE_SLOW;
+const T_BUILD  = T_MOVE + BUILD_LEAD;                     // triangles land on the moving head
 const HAIR_GROW = 0.60;  // how long hair outside the head takes to grow out from its roots to its tips
-const W_MAX    = 1 + 3 * STAGE_GAP + BAND + HAIR_GROW + 0.05;   // wave position when everything is done
-const T_DONE   = T_BUILD + BUILD_TIME + 0.8;
+const SPEED    = (1 + 3 * STAGE_GAP + BAND + HAIR_GROW + 0.05) / BUILD_TIME;   // how fast the wave travels
+const PHOTO_START = Math.max(3 * STAGE_GAP, SPEED * (T_MOVED + SETTLE - T_BUILD)); // the real photo waits for the final pose
+const W_MAX    = PHOTO_START + 1 + BAND + HAIR_GROW + 0.05;   // wave position when everything is done
+const T_DONE   = T_BUILD + W_MAX / SPEED + 0.8;
 
 /* ================= Scene and camera ================= */
 const stage = document.querySelector('.face-stage');
@@ -67,35 +67,111 @@ const FOV = 22;
 const camera = new THREE.PerspectiveCamera(FOV, innerWidth / innerHeight, 0.05, 200);
 const tnF = Math.tan(THREE.MathUtils.degToRad(FOV / 2));
 const winW = () => stage.clientWidth, winH = () => stage.clientHeight;
-// the head stays in the left part of the layout; only on windows taller than wide (text underneath) is it centred
-const shiftFor = (w, h) => SHIFT * smooth(clamp01((w / h - 0.8) / 0.2));
-// The head is framed in the band between the site's header and the bottom of the window; on windows
-// taller than wide the profile text sits underneath, so the band stops just above the text.
+
+/* ================= Layout: where the head and the profile text go =================
+   Everything is worked out from the head's real outline in the final photo (not the photo's frame,
+   which has a lot of empty grey round it), and from the page's content edges (those of the gallery).
+   Side by side: the head keeps its height and the text column narrows first; only when the text
+   would be too narrow does the head shrink, and if it would get too small the two stack.
+   Stacked: the head and the text form one group, text just under the chin, centred in the window. */
 const siteHeader = document.querySelector('.header'), wordsEl = document.querySelector('.face-words');
-function band(w, h) {
-  const tall = 1 - smooth(clamp01((w / h - 0.8) / 0.2));
-  // on phones the header slims while you scroll (header.js), so frame the head below the slim header
-  const top = siteHeader ? Math.min(Number(siteHeader.dataset.compactHeight) || siteHeader.offsetHeight, 0.4 * h) : 0;
-  const below = wordsEl ? wordsEl.offsetTop - 0.03 * h : h;
-  const bottom = lerp(h, Math.max(below, top + 0.26 * h), tall);
-  return { room: (bottom - top) / h, lift: h / 2 - (top + bottom) / 2 };
+const sectionEl = document.querySelector('.face-section');
+const FILL = 0.88;          // how much of the free height the head fills
+const MIN_TEXT = 300;       // narrowest the text column may be, side by side (px)
+const MIN_HEAD = 0.62;      // stack rather than let the side-by-side head drop below this share of its full size
+const headBox = await (async () => {                    // the head's outline in the photo, from its transparency
+  const im = new Image(); im.src = here('final-alpha.png'); await im.decode();
+  const W = 240, H = Math.round(W * im.naturalHeight / im.naturalWidth);
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const g = c.getContext('2d'); g.drawImage(im, 0, 0, W, H);
+  const d = g.getImageData(0, 0, W, H).data;
+  let x0 = W, x1 = 0, y0 = H, y1 = 0;
+  const rowLeft = new Array(H).fill(W);                 // leftmost part of the head on each row
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (d[(y * W + x) * 4] > 127) {
+    if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+    if (x < rowLeft[y]) rowLeft[y] = x;
+  }
+  // leftmost point over the bottom part of the outline (the V-neck), from the bottom up, in plane units
+  const vLeft = [];
+  let m = W; for (let y = y1; y >= y0; y--) { m = Math.min(m, rowLeft[y]); vLeft.push(m / W - 0.5); }
+  // in the photo plane's units: 1 wide, ASPECT tall, centred on the camera's line of sight
+  return { left: x0 / W - 0.5, right: (x1 + 1) / W - 0.5, top: ASPECT / 2 - y0 / H * ASPECT, bottom: ASPECT / 2 - (y1 + 1) / H * ASPECT,
+           vLeftAt: f => vLeft[Math.min(vLeft.length - 1, Math.max(0, Math.round(f * (vLeft.length - 1))))] };
+})();
+const headW = headBox.right - headBox.left, headH = headBox.top - headBox.bottom, headRatio = headW / headH;
+function pageEdge(w) {                                  // the gallery paintings' edges: its padding plus 1em
+  const pad = w >= 900 ? Math.max(120, (w - 1200) / 2 + 120) : w > 720 ? 24 : w > 540 ? 10 : 12;
+  return pad + 16;
 }
-function camDistance(w, h) {
-  const fitW = (0.5 / (1 - 2 * shiftFor(w, h))) / (tnF * w / h);                   // room for the shift on wide windows
-  return Math.max((ASPECT / 2) / tnF / (FRAME_FILL * band(w, h).room), fitW / FRAME_FILL);
+const CAM_D = (ASPECT / 2) / tnF / FRAME_FILL;          // fixed: only sets how strong the perspective is
+function layout(w, h) {
+  const top = (siteHeader ? Number(siteHeader.dataset.compactHeight) || siteHeader.offsetHeight : 0) + 0.04 * h;
+  const bottom = h - 0.04 * h, free = bottom - top;
+  const E = pageEdge(w), L = E, R = w - E, C = R - L;
+  let stacked = false, Hpx = FILL * free, textW;
+  if (wordsEl) {
+    const gap = Math.max(40, 0.04 * w);
+    textW = Math.min(0.45 * C, C - Hpx * headRatio - gap);
+    if (textW < MIN_TEXT) { textW = MIN_TEXT; Hpx = (C - gap - MIN_TEXT) / headRatio; }
+    stacked = Hpx < MIN_HEAD * FILL * free;
+  }
+  let cx, cy, words = null;
+  sectionEl && sectionEl.classList.toggle('face-stacked', stacked);
+  if (!wordsEl) { cx = w / 2; cy = (top + bottom) / 2; }
+  else if (!stacked) {
+    const gap = Math.max(40, 0.04 * w);
+    wordsEl.style.width = textW + 'px';
+    const tH = wordsEl.offsetHeight;
+    cx = L + (C - textW - gap) / 2; cy = (top + bottom) / 2;
+    words = { left: R - textW, top: Math.max(top, cy - tH / 2), width: textW };
+  } else {
+    wordsEl.style.width = C + 'px';
+    const tH = wordsEl.offsetHeight, gap = 0.03 * h;
+    // the short heading can sit beside the narrow point of the V-neck, so the text starts right under the chin
+    const h2 = wordsEl.firstElementChild;
+    let tuck = 0, headingW = Infinity;
+    if (h2) {
+      const r = document.createRange(); r.selectNodeContents(h2); headingW = r.getBoundingClientRect().width;
+      tuck = h2.offsetHeight + parseFloat(getComputedStyle(h2).marginBottom || 0);
+    }
+    const place = t => {
+      const H2 = Math.max(0.15 * h, Math.min(FILL * (free - tH - gap + t), 0.92 * C / headRatio));
+      const g0 = top + Math.max(0, (free - (H2 + gap + tH - t)) / 2);
+      return { H2, g0, x: w / 2 - SHIFT_TALL * w };
+    };
+    let p = place(tuck);
+    const sc = p.H2 / headH, Xm = (headBox.left + headBox.right) / 2;
+    const vLeftPx = p.x + (headBox.vLeftAt((tuck + gap) / p.H2) - Xm) * sc;   // where the neck is, beside the heading
+    if (!(L + headingW + 0.04 * w < vLeftPx)) { tuck = 0; p = place(0); }       // no room beside the neck: keep it below
+    Hpx = p.H2; cx = p.x; cy = p.g0 + Hpx / 2;
+    words = { left: L, top: p.g0 + Hpx + gap - tuck, width: C };
+  }
+  // the lens that puts the head's outline exactly there: its height sets the zoom, its centre the shift
+  const scale = Hpx / headH, tn = (h / 2) / (scale * CAM_D);
+  const Xc = (headBox.left + headBox.right) / 2, Yc = (headBox.top + headBox.bottom) / 2;
+  return { tn, sx: w / 2 + Xc * scale - cx, sy: h / 2 - Yc * scale - cy, words };
 }
-const CAM_D = camDistance(winW(), winH());
-const VIEW_ASPECT = winW() / winH(), VIEW_SHIFT = shiftFor(winW(), winH());
+function applyWords(o) {
+  if (!o || !wordsEl) return;
+  Object.assign(wordsEl.style, { left: o.left + 'px', top: o.top + 'px', width: o.width + 'px', right: 'auto', bottom: 'auto', transform: 'none' });
+}
+const L0LAY = layout(winW(), winH()); applyWords(L0LAY.words);
+const VIEW_ASPECT = winW() / winH(), VIEW_SHIFT = L0LAY.sx / winW(), VIEW_TN = L0LAY.tn;
+const VIEW_LIFT = Math.max(L0LAY.sy, 0) / winH();
+let fitting = false;
 function fit() {
+  if (fitting) return; fitting = true;
   const w = winW(), h = winH();
   renderer.setSize(w, h);
   camera.aspect = w / h;
-  // the camera never moves; if the window changes shape, the lens adjusts so the head keeps its size
-  camera.fov = 2 * THREE.MathUtils.radToDeg(Math.atan(tnF * camDistance(w, h) / CAM_D));
-  camera.setViewOffset(w, h, shiftFor(w, h) * w, band(w, h).lift, w, h);         // head to the left on wide windows, above the text on tall ones
+  // the camera never moves; the lens is chosen so the finished head lands in its place in the layout
+  const lay = layout(w, h); applyWords(lay.words);
+  camera.fov = 2 * THREE.MathUtils.radToDeg(Math.atan(lay.tn));
+  camera.setViewOffset(w, h, lay.sx, lay.sy, w, h);
   camera.updateProjectionMatrix();
   pointMat.uniforms.uScale.value = h / 900 * Math.min(devicePixelRatio, 2);
   if (tShown >= 0) frame(tShown);
+  fitting = false;
 }
 
 /* Measured positions are positions in the photo; pull each in by its depth so the final camera
@@ -109,6 +185,13 @@ const tmpM = new THREE.Matrix4();
    just as a real neck does when you turn your head. */
 const NECK_TOP = meta.neck.top, NECK_BOTTOM = meta.neck.bottom;
 const restM = new THREE.Matrix4().fromArray(MATS, (NF - 1) * 16).elements;   // the final pose
+const poseNow = new THREE.Matrix4(), restInv = new THREE.Matrix4().fromArray(restM).invert();
+function frameMatrix(fr, m) {
+  const f = Math.min(Math.max(fr, 0), NF - 1), k = Math.floor(f), w = f - k, k2 = Math.min(k + 1, NF - 1);
+  const e = m.elements;
+  for (let j = 0; j < 16; j++) e[j] = lerp(MATS[k * 16 + j], MATS[k2 * 16 + j], w);
+  return m;
+}
 function posed(fr, out, shape = SHAPE, n = N) {
   const f = Math.min(Math.max(fr, 0), NF - 1), k = Math.floor(f), w = f - k, k2 = Math.min(k + 1, NF - 1);
   const e = tmpM.elements;
@@ -129,14 +212,14 @@ axX /= N; axZ /= N;
 
 /* Sea: each point's place comes from its longitude and latitude on the head, so neighbours stay neighbours */
 const seaX = new Float32Array(N), seaZ = new Float32Array(N), delay = new Float32Array(N), phi = new Float32Array(N);
-const SEA_NEAR_D = Math.abs(SEA_Y) / (tnF * 1.12);          // nearest sea sits just below the bottom of the window
+const SEA_NEAR_D = Math.abs(SEA_Y) / (VIEW_TN * (1 + 2 * VIEW_LIFT) * 1.15);   // nearest sea sits just below the bottom of the window
 const SEA_FAR_D = 45;
 let maxR = 0;
 const WC = CAM_D - SEA_NEAR_D - 1.5;                          // where on the sea the whirlwind forms
 for (let i = 0; i < N; i++) {
   const D = SEA_NEAR_D * Math.pow(SEA_FAR_D / SEA_NEAR_D, Math.pow((SEA[i * 2 + 1] + 1) / 2, 1.1));
-  const halfW = tnF * VIEW_ASPECT * D;                       // wide enough to reach past both sides of the window
-  seaX[i] = (SEA[i * 2] * 1.35 + 2 * VIEW_SHIFT) * halfW;
+  const halfW = VIEW_TN * VIEW_ASPECT * D;                       // wide enough to reach past both sides of the window
+  seaX[i] = (SEA[i * 2] * 1.45 + 2 * VIEW_SHIFT) * halfW;
   seaZ[i] = CAM_D - D;
   maxR = Math.max(maxR, Math.hypot(seaX[i] - axX, seaZ[i] - WC));
 }
@@ -151,7 +234,7 @@ function waveY(x, z, t) {
   return SEA_Y + WAVE_HEIGHT * (Math.sin(x * 2.1 + t * 0.9) * 0.6 + Math.sin(z * 1.3 - t * 1.1) * 0.8 + Math.sin((x + z) * 3.7 + t * 1.7) * 0.25);
 }
 function pointPositions(t, out) {
-  if (t >= T_ARRIVE) { if (t >= T_MOVE) posed((t - T_MOVE) * FPS, out); else out.set(firstPose); return; }
+  if (t >= T_ARRIVE) { if (t >= T_MOVE) posed((t - T_MOVE) * FPS / MOVE_SLOW, out); else out.set(firstPose); return; }
   for (let i = 0; i < N; i++) {
     const PHI = phi[i], ca = Math.cos(-PHI), sa = Math.sin(-PHI);
     const k = i * 3, s = clamp01((t - T_WHIRL - delay[i]) / WHIRL_TIME);
@@ -269,11 +352,21 @@ function levelMesh(level, mode) {
     defines: { MODE: mode, FLYIN: level === 0 ? 1 : 0 },
     uniforms: { uW: { value: -1 }, uStart: { value: STAGE_START[level] }, uBand: { value: BAND }, uLand: { value: LAND },
                 uNose: { value: nose3 }, uMaxD: { value: MAXD }, uEdges: { value: level === 0 ? 0.5 : 0.22 },
+                uM: { value: new THREE.Matrix4() }, uRinv: { value: restInv }, uCamD: { value: CAM_D },
+                uNeckTop: { value: NECK_TOP }, uNeckBottom: { value: NECK_BOTTOM },
                 map: { value: mode === 0 ? texSoft : texSharp }, mapSoft: { value: texSoft }, alphaMap: { value: alphaTex } },
     vertexShader: `
       attribute vec3 aBary, aCentre, aFly; attribute vec4 aSpin; attribute vec2 aCuv; attribute float aDelay;
-      uniform float uW, uStart, uLand;
+      uniform float uW, uStart, uLand, uCamD, uNeckTop, uNeckBottom; uniform mat4 uM, uRinv;
       varying vec3 vBary, vView, vPos; varying vec2 vUv, vCuv; varying float vLand;
+      // the final-pose point, moved to where the head is now (the neck base stays put), as the wireframe is
+      vec3 poseNow(vec3 q) {
+        vec3 raw = vec3(q.xy / ((uCamD - q.z) / uCamD), q.z);            // undo the camera pre-warp
+        vec4 s = uRinv * vec4(raw, 1.0);                                 // back to the measured head shape
+        float h = 1.0 - smoothstep(0.0, 1.0, clamp((s.y - uNeckTop) / (uNeckBottom - uNeckTop), 0.0, 1.0));
+        vec3 a = mix(raw, (uM * s).xyz, h);
+        return vec3(a.xy * ((uCamD - a.z) / uCamD), a.z);                // pre-warp again
+      }
       vec3 rotate(vec3 v, vec3 a, float t) { return v * cos(t) + cross(a, v) * sin(t) + a * dot(a, v) * (1.0 - cos(t)); }
       void main() {
         vec3 p = position;
@@ -288,6 +381,7 @@ function levelMesh(level, mode) {
           vLand = 1.0;
         #endif
         vBary = aBary; vUv = uv; vCuv = aCuv; vPos = position;
+        p = poseNow(p);
         vec4 mv = modelViewMatrix * vec4(p, 1.0);
         vView = -mv.xyz;
         gl_Position = projectionMatrix * mv;
@@ -334,7 +428,7 @@ const photoMat = new THREE.ShaderMaterial({
   transparent: true, depthWrite: false, depthTest: false,
   uniforms: { map: { value: photoTex }, alphaMap: { value: alphaTex }, uBg: { value: new THREE.Vector3(...bgRGB) }, order: { value: orderTex }, uGrow: { value: HAIR_GROW }, uAspect: { value: ASPECT },
               uCentre: { value: new THREE.Vector2(headCentre.x, headCentre.y) },
-              uW: { value: -1 }, uStart: { value: 3 * STAGE_GAP }, uBand: { value: BAND },
+              uW: { value: -1 }, uStart: { value: PHOTO_START }, uBand: { value: BAND },
               uNose: { value: nose3 }, uMaxD: { value: MAXD } },
   vertexShader: `varying vec3 vPos; varying vec2 vUv; void main(){ vUv = uv; vPos = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
   fragmentShader: `
@@ -388,15 +482,17 @@ function frame(t) {
   ptGeo.attributes.position.needsUpdate = true;
 
   // one wave, travelling outwards from the nose; every stage follows it a little behind the last
-  const u = ramp(t, T_BUILD, BUILD_TIME);
-  const W = t < T_BUILD ? -1 : W_MAX * u;                                 // steady speed
+  const W = t < T_BUILD ? -1 : Math.min(SPEED * (t - T_BUILD), W_MAX);  // steady speed
+  // the triangles follow the head's movement: this frame's pose against the final one
+  frameMatrix(t >= T_MOVE ? (t - T_MOVE) * FPS / MOVE_SLOW : 0, poseNow);
+  for (const L of [L0, L1, L2]) L.material.uniforms.uM.value.copy(poseNow);
   for (const L of [L0, L1, L2]) { L.visible = t >= T_BUILD; L.material.uniforms.uW.value = W; }
   photoMat.uniforms.uW.value = W;
   pointMat.uniforms.uW.value = W;
   // the mesh: lines appear as the head forms and follow its movement; the points fade back behind them
   const meshIn = smooth(ramp(t, T_ARRIVE - 1.4, 1.6));
   if (meshIn > 0) {
-    posed(t >= T_MOVE ? (t - T_MOVE) * FPS : 0, nodePos, SHAPE0, N0);
+    posed(t >= T_MOVE ? (t - T_MOVE) * FPS / MOVE_SLOW : 0, nodePos, SHAPE0, N0);
     for (let j = 0; j < E0.length; j++) { const v = E0[j]; linePos[j * 3] = nodePos[v * 3]; linePos[j * 3 + 1] = nodePos[v * 3 + 1]; linePos[j * 3 + 2] = nodePos[v * 3 + 2]; }
     lineGeo.attributes.position.needsUpdate = true;
     occGeo.attributes.position.needsUpdate = true; occGeo.computeBoundingSphere();

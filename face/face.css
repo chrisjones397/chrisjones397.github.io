@@ -3,9 +3,9 @@
 .face-section { position: relative; height: 400vh; }
 .face-stage { position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; }
 .face-stage canvas { position: absolute; inset: 0; display: block; }
-.face-words { position: absolute; z-index: 1; right: 8vw; top: 50%; transform: translateY(-50%); width: 34vw; }
-/* Windows taller than wide: the text sits at the bottom, below the head, a little smaller on short screens */
-@media (max-aspect-ratio: 1/1) {
-  .face-words { left: 7vw; right: 7vw; width: auto; top: auto; bottom: 4vh; transform: none;
-                font-size: clamp(0.75rem, min(3.7vw, 1.95vh), 1rem); }
-}
+
+/* The profile text. face.js places it (and the head) from the head's real outline and the gallery's
+   edges; these are only the starting values, used until it runs. */
+.face-words { position: absolute; z-index: 1; right: 8vw; top: 50%; transform: translateY(-50%); width: 40vw; }
+/* When the text sits under the head, it is a little smaller on short screens */
+.face-stacked .face-words { font-size: clamp(0.75rem, min(3.7vw, 1.95vh), 1rem); }
