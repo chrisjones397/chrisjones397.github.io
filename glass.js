@@ -8,7 +8,6 @@
   const STRENGTH = 1.7;    // how far the edge bends the picture (times the bevel height)
   const BLUR = 10;         // matches backdrop-filter: blur(10px)
   const SATURATE = 1.4;    // matches saturate(140%)
-  const TINT = 0.4;        // matches background-color: rgba(255,255,255,0.4)
   const EASE = 160;        // CSS pixels of scrolling over which the bending eases off
 
   const header = document.querySelector('.header');
@@ -34,7 +33,7 @@
     uniform float lod;       // texture detail level for the blur
     uniform float bend;      // 0 to 1
     uniform vec3 bg;         // page colour, for anything under the header that isn't the picture
-    uniform float bevel, strength, blur, sat, tint;
+    uniform float bevel, strength, blur, sat, tint; uniform vec3 tintRGB;
     out vec4 o;
     vec3 pick(vec2 q) {                                        // q: a point in the window, CSS px
       if (q.x < box.x || q.y < box.y || q.x > box.x + box.z || q.y > box.y + box.w) return bg;
@@ -59,7 +58,7 @@
                     0.715 - 0.715 * sat, 0.715 + 0.285 * sat, 0.715 - 0.715 * sat,
                     0.072 - 0.072 * sat, 0.072 - 0.072 * sat, 0.072 + 0.928 * sat);
       c = clamp(S * c, 0.0, 1.0);
-      c = mix(c, vec3(1.0), tint);                              // the header's 40% white
+      c = mix(c, tintRGB, tint);                                // the header's own tint colour
       // a faint highlight along the glass edge
       c += bend * (0.16 * pow(1.0 - t, 6.0) + 0.05 * k);
       o = vec4(min(c, 1.0), 1.0);
@@ -76,12 +75,18 @@
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
   const loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc);
   gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-  const U = {}; for (const n of ['img', 'res', 'dpr', 'box', 'place', 'lod', 'bend', 'bg', 'bevel', 'strength', 'blur', 'sat', 'tint'])
+  const U = {}; for (const n of ['img', 'res', 'dpr', 'box', 'place', 'lod', 'bend', 'bg', 'bevel', 'strength', 'blur', 'sat', 'tint', 'tintRGB'])
     U[n] = gl.getUniformLocation(prog, n);
   const bgRGB = (getComputedStyle(document.body).backgroundColor.match(/[\d.]+/g) || [100, 100, 100]).slice(0, 3).map(v => v / 255);
   gl.uniform3f(U.bg, ...bgRGB);
   gl.uniform1f(U.bevel, BEVEL); gl.uniform1f(U.strength, STRENGTH); gl.uniform1f(U.blur, BLUR);
-  gl.uniform1f(U.sat, SATURATE); gl.uniform1f(U.tint, TINT); gl.uniform1i(U.img, 0);
+  gl.uniform1f(U.sat, SATURATE); gl.uniform1i(U.img, 0);
+  // the tint matches the header's CSS background colour, whatever it is set to
+  function readTint() {
+    const v = (getComputedStyle(header).backgroundColor.match(/[\d.]+/g) || [255, 255, 255, 0.4]).map(Number);
+    gl.uniform3f(U.tintRGB, v[0] / 255, v[1] / 255, v[2] / 255); gl.uniform1f(U.tint, v.length > 3 ? v[3] : 1);
+  }
+  readTint();
 
   let tex = null, natW = 0, natH = 0, queued = false;
   function loadTexture() {

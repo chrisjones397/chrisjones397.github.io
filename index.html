@@ -69,13 +69,30 @@
       display: flex;
       column-gap: 20px;
     }
+    .site-title {
+      display: flex;
+      align-items: baseline;
+      column-gap: 0.55em;
+      flex-wrap: wrap;
+      color: #fff;
+      line-height: 1.15;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.25);   /* stays readable over light parts of a picture */
+    }
+    .site-name {
+      font-size: clamp(1.45rem, 2.6vw, 2.1rem);
+      font-weight: 400;
+      letter-spacing: 0.01em;
+    }
+    .site-tag {
+      font-size: clamp(0.95rem, 1.5vw, 1.2rem);
+      font-weight: 300;
+      opacity: 0.9;
+    }
     .nav-link {
       font-size: 16px;
-      color: rgba(255,255,255,0.6);
+      color: rgba(255,255,255,0.85);
+      text-shadow: 0 1px 6px rgba(0,0,0,0.25);
       transition: 0.4s;
-    }
-    .nav-link object {
-      height: 6rem;
     }
     .nav-link:hover,
     .nav-link:focus {
@@ -213,26 +230,21 @@
       .gallery-block { padding: 0 24px; }
       .wrapper { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
-    /* Narrow windows: header stacks, logo centred */
+    /* Narrow windows: header stacks, name centred */
     @media (max-width: 720px) {
       .header-block {
         flex-direction: column;
-        padding: 30px 0;
-        row-gap: 20px;
+        padding: 18px 0 14px;
+        row-gap: 12px;
       }
-      .nav-link object {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        position: relative;
-        left: 8%;   /* shift right a bit */
-      }
-      /* Phones: the header slims to the logo bar while scrolling down (header.js) */
+      .site-title { justify-content: center; }
+      /* Phones: the header slims to the name bar while scrolling down (header.js) */
       .header-block { transition: padding 0.35s ease, row-gap 0.35s ease; }
-      .nav-link object { transition: height 0.35s ease; }
+      .site-name, .site-tag { transition: font-size 0.35s ease; }
       .nav { max-height: 3rem; overflow: hidden; transition: max-height 0.35s ease, opacity 0.25s ease; }
-      .header.compact .header-block { min-height: 0; padding: 8px 0; row-gap: 0; }
-      .header.compact .nav-link object { height: 3rem; }
+      .header.compact .header-block { min-height: 0; padding: 10px 0; row-gap: 0; }
+      .header.compact .site-name { font-size: 1.25rem; }
+      .header.compact .site-tag { font-size: 0.85rem; }
       .header.compact .nav { max-height: 0; opacity: 0; pointer-events: none; }
       .header.no-anim, .header.no-anim * { transition: none !important; }
       .gallery-block {
@@ -250,35 +262,16 @@
   </style>
   <!-- make_pages.py extras: start (rebuilt on every run; edit the script, not this block) -->
   <style>
-    /* The logo sits inside <object>, which would otherwise swallow clicks,
-       so let clicks pass through to the link around it. */
-    .header a object { pointer-events: none; }
     /* No outline on the paintings; keep it round the section headings. */
     .wrapper > div:not(.entire) { border: none; }
-    /* While the logo is being set to its finished state, keep it hidden
-       so the first frame of the animation never flashes up. */
-    html.logo-still .header object { visibility: hidden; }
-    html.logo-still.logo-ready .header object { visibility: visible; }
   </style>
-  <script>
-    /* Decide before anything is drawn whether the logo should animate:
-       painting pages never animate it; the main page animates it only on a
-       visitor's first view in this browser session. */
-    (function () {
-      var root = document.documentElement, seen = false;
-      if (root.getAttribute('data-page') === 'painting') { root.classList.add('logo-still'); return; }
-      try { seen = sessionStorage.getItem('logoSeen') === '1'; } catch (e) {}
-      if (seen) root.classList.add('logo-still');
-      try { sessionStorage.setItem('logoSeen', '1'); } catch (e) {}
-    })();
-  </script>
   <!-- make_pages.py extras: end -->
 </head>
 <body>
 
   <header id="header" class="header">
     <div class="header-block">
-      <a href="#" class="nav-link"><object type="image/svg+xml" data="med/chris-jones-org-uk-animated.svg"></object></a>
+      <a href="#" class="site-title"><span class="site-name">Christopher Jones</span> <span class="site-tag">Fine Art</span></a>
       <nav class="nav">
         <ul class="nav-list">
           <li><a href="#profile" class="nav-link">Profile</a></li>
@@ -347,30 +340,30 @@
           <div class="entire"><h3 id="figures">Figures</h3></div>
 
           <div class="entire">
-            <a href="paintings/green-background-seven-figures/" data-full="img/green-background-seven-figures.png">
+            <a href="paintings/green-background-with-seven-figures/" data-full="img/green-background-with-seven-figures.png">
             <picture>
               <source 
                 srcset="
-                  img/webp/green-background-seven-figures-300.webp 300w,
-                  img/webp/green-background-seven-figures-480.webp 480w,
-                  img/webp/green-background-seven-figures-768.webp 768w,
-                  img/webp/green-background-seven-figures-1024.webp 1024w,
-                  img/webp/green-background-seven-figures-1536.webp 1536w
+                  img/webp/green-background-with-seven-figures-300.webp 300w,
+                  img/webp/green-background-with-seven-figures-480.webp 480w,
+                  img/webp/green-background-with-seven-figures-768.webp 768w,
+                  img/webp/green-background-with-seven-figures-1024.webp 1024w,
+                  img/webp/green-background-with-seven-figures-1536.webp 1536w
                 "
                 type="image/webp"
                 sizes="100vw">
               <source 
                 srcset="
-                  img/jpg/green-background-seven-figures-300.jpg 300w,
-                  img/jpg/green-background-seven-figures-480.jpg 480w,
-                  img/jpg/green-background-seven-figures-768.jpg 768w,
-                  img/jpg/green-background-seven-figures-1024.jpg 1024w,
-                  img/jpg/green-background-seven-figures-1536.jpg 1536w
+                  img/jpg/green-background-with-seven-figures-300.jpg 300w,
+                  img/jpg/green-background-with-seven-figures-480.jpg 480w,
+                  img/jpg/green-background-with-seven-figures-768.jpg 768w,
+                  img/jpg/green-background-with-seven-figures-1024.jpg 1024w,
+                  img/jpg/green-background-with-seven-figures-1536.jpg 1536w
                 "
                 type="image/jpeg"
                 sizes="100vw">
               <img 
-                src="img/jpg/green-background-seven-figures-768.jpg" 
+                src="img/jpg/green-background-with-seven-figures-768.jpg" 
                 alt="Green Background with Seven Figures"
                 loading="lazy">
             </picture>
@@ -382,15 +375,15 @@
           <div class="entire"><h3 id="abstracts">Abstracts</h3></div>
 
           <div class="landscape">
-            <a href="paintings/blue/" data-full="img/blue.png">
+            <a href="paintings/composition-in-blue-with-border/" data-full="img/composition-in-blue-with-border.png">
               <picture>
                 <source 
                   srcset="
-                    img/webp/blue-300.webp 300w, 
-                    img/webp/blue-480.webp 480w, 
-                    img/webp/blue-768.webp 768w, 
-                    img/webp/blue-1024.webp 1024w, 
-                    img/webp/blue-1536.webp 1536w
+                    img/webp/composition-in-blue-with-border-300.webp 300w, 
+                    img/webp/composition-in-blue-with-border-480.webp 480w, 
+                    img/webp/composition-in-blue-with-border-768.webp 768w, 
+                    img/webp/composition-in-blue-with-border-1024.webp 1024w, 
+                    img/webp/composition-in-blue-with-border-1536.webp 1536w
                     "
                   type="image/webp"
                   sizes="(max-width: 540px) 100vw, 
@@ -398,18 +391,18 @@
                     33vw">
                 <source 
                   srcset="
-                    img/jpg/blue-300.jpg 300w,
-                    img/jpg/blue-480.jpg 480w,
-                    img/jpg/blue-768.jpg 768w,
-                    img/jpg/blue-1024.jpg 1024w,
-                    img/jpg/blue-1536.jpg 1536w
+                    img/jpg/composition-in-blue-with-border-300.jpg 300w,
+                    img/jpg/composition-in-blue-with-border-480.jpg 480w,
+                    img/jpg/composition-in-blue-with-border-768.jpg 768w,
+                    img/jpg/composition-in-blue-with-border-1024.jpg 1024w,
+                    img/jpg/composition-in-blue-with-border-1536.jpg 1536w
                   "
                   type="image/jpeg"
                   sizes="(max-width: 540px) 100vw, 
                     (max-width: 899px) 50vw, 
                     33vw">
                 <img 
-                  src="img/jpg/blue-480.jpg" 
+                  src="img/jpg/composition-in-blue-with-border-480.jpg" 
                   alt="Composition in Blue with Border"
                   loading="lazy">
               </picture>
@@ -418,15 +411,15 @@
           </div>
 
           <div class="landscape">
-            <a href="paintings/red-thick-border/" data-full="img/red-thick-border.png">
+            <a href="paintings/composition-in-red-with-border/" data-full="img/composition-in-red-with-border.png">
               <picture>
                 <source 
                   srcset="
-                    img/webp/red-thick-border-300.webp 300w, 
-                    img/webp/red-thick-border-480.webp 480w, 
-                    img/webp/red-thick-border-768.webp 768w, 
-                    img/webp/red-thick-border-1024.webp 1024w, 
-                    img/webp/red-thick-border-1536.webp 1536w
+                    img/webp/composition-in-red-with-border-300.webp 300w, 
+                    img/webp/composition-in-red-with-border-480.webp 480w, 
+                    img/webp/composition-in-red-with-border-768.webp 768w, 
+                    img/webp/composition-in-red-with-border-1024.webp 1024w, 
+                    img/webp/composition-in-red-with-border-1536.webp 1536w
                   "
                   type="image/webp"
                   sizes="(max-width: 540px) 100vw, 
@@ -434,18 +427,18 @@
                     33vw">
                 <source 
                   srcset="
-                    img/jpg/red-thick-border-300.jpg 300w,
-                    img/jpg/red-thick-border-480.jpg 480w,
-                    img/jpg/red-thick-border-768.jpg 768w,
-                    img/jpg/red-thick-border-1024.jpg 1024w,
-                    img/jpg/red-thick-border-1536.jpg 1536w
+                    img/jpg/composition-in-red-with-border-300.jpg 300w,
+                    img/jpg/composition-in-red-with-border-480.jpg 480w,
+                    img/jpg/composition-in-red-with-border-768.jpg 768w,
+                    img/jpg/composition-in-red-with-border-1024.jpg 1024w,
+                    img/jpg/composition-in-red-with-border-1536.jpg 1536w
                   "
                   type="image/jpeg"
                   sizes="(max-width: 540px) 100vw, 
                     (max-width: 899px) 50vw, 
                     33vw">
                 <img 
-                  src="img/jpg/red-thick-border-480.jpg" 
+                  src="img/jpg/composition-in-red-with-border-480.jpg" 
                   alt="Composition in Red with Border"
                   loading="lazy">
               </picture>
@@ -454,15 +447,15 @@
           </div>
           
           <div class="landscape">
-            <a href="paintings/purple/" data-full="img/purple.png">
+            <a href="paintings/composition-in-purple/" data-full="img/composition-in-purple.png">
               <picture>
                 <source 
                   srcset="
-                    img/webp/purple-300.webp 300w, 
-                    img/webp/purple-480.webp 480w, 
-                    img/webp/purple-768.webp 768w, 
-                    img/webp/purple-1024.webp 1024w, 
-                    img/webp/purple-1536.webp 1536w
+                    img/webp/composition-in-purple-300.webp 300w, 
+                    img/webp/composition-in-purple-480.webp 480w, 
+                    img/webp/composition-in-purple-768.webp 768w, 
+                    img/webp/composition-in-purple-1024.webp 1024w, 
+                    img/webp/composition-in-purple-1536.webp 1536w
                   "
                   type="image/webp"
                   sizes="(max-width: 540px) 100vw, 
@@ -470,18 +463,18 @@
                     33vw">
                 <source 
                   srcset="
-                    img/jpg/purple-300.jpg 300w,
-                    img/jpg/purple-480.jpg 480w,
-                    img/jpg/purple-768.jpg 768w,
-                    img/jpg/purple-1024.jpg 1024w,
-                    img/jpg/purple-1536.jpg 1536w
+                    img/jpg/composition-in-purple-300.jpg 300w,
+                    img/jpg/composition-in-purple-480.jpg 480w,
+                    img/jpg/composition-in-purple-768.jpg 768w,
+                    img/jpg/composition-in-purple-1024.jpg 1024w,
+                    img/jpg/composition-in-purple-1536.jpg 1536w
                   "
                   type="image/jpeg"
                   sizes="(max-width: 540px) 100vw, 
                     (max-width: 899px) 50vw, 
                     33vw">
                 <img 
-                  src="img/jpg/purple-480.jpg" 
+                  src="img/jpg/composition-in-purple-480.jpg" 
                   alt="Composition in Purple"
                   loading="lazy">
               </picture>
@@ -490,15 +483,15 @@
           </div>
           
           <div class="landscape">
-            <a href="paintings/abstract-collaboration-with-teo-1/" data-full="img/abstract-collaboration-with-teo-1.png">
+            <a href="paintings/collaboration-with-teo-1/" data-full="img/collaboration-with-teo-1.png">
               <picture>
                 <source 
                   srcset="
-                    img/webp/abstract-collaboration-with-teo-1-300.webp 300w, 
-                    img/webp/abstract-collaboration-with-teo-1-480.webp 480w, 
-                    img/webp/abstract-collaboration-with-teo-1-768.webp 768w, 
-                    img/webp/abstract-collaboration-with-teo-1-1024.webp 1024w, 
-                    img/webp/abstract-collaboration-with-teo-1-1536.webp 1536w
+                    img/webp/collaboration-with-teo-1-300.webp 300w, 
+                    img/webp/collaboration-with-teo-1-480.webp 480w, 
+                    img/webp/collaboration-with-teo-1-768.webp 768w, 
+                    img/webp/collaboration-with-teo-1-1024.webp 1024w, 
+                    img/webp/collaboration-with-teo-1-1536.webp 1536w
                   "
                   type="image/webp"
                   sizes="(max-width: 540px) 100vw, 
@@ -506,18 +499,18 @@
                     33vw">
                 <source 
                   srcset="
-                    img/jpg/abstract-collaboration-with-teo-1-300.jpg 300w,
-                    img/jpg/abstract-collaboration-with-teo-1-480.jpg 480w,
-                    img/jpg/abstract-collaboration-with-teo-1-768.jpg 768w,
-                    img/jpg/abstract-collaboration-with-teo-1-1024.jpg 1024w,
-                    img/jpg/abstract-collaboration-with-teo-1-1536.jpg 1536w
+                    img/jpg/collaboration-with-teo-1-300.jpg 300w,
+                    img/jpg/collaboration-with-teo-1-480.jpg 480w,
+                    img/jpg/collaboration-with-teo-1-768.jpg 768w,
+                    img/jpg/collaboration-with-teo-1-1024.jpg 1024w,
+                    img/jpg/collaboration-with-teo-1-1536.jpg 1536w
                   "
                   type="image/jpeg"
                   sizes="(max-width: 540px) 100vw, 
                     (max-width: 899px) 50vw, 
                     33vw">
                 <img 
-                  src="img/jpg/abstract-collaboration-with-teo-1-480.jpg" 
+                  src="img/jpg/collaboration-with-teo-1-480.jpg" 
                   alt="Collaboration with Teo #1"
                   loading="lazy">
               </picture>
@@ -526,15 +519,15 @@
           </div>
 
           <div class="landscape">
-            <a href="paintings/abstract-collaboration-with-teo-2/" data-full="img/abstract-collaboration-with-teo-2.png">
+            <a href="paintings/collaboration-with-teo-2/" data-full="img/collaboration-with-teo-2.png">
               <picture>
                 <source 
                   srcset="
-                    img/webp/abstract-collaboration-with-teo-2-300.webp 300w, 
-                    img/webp/abstract-collaboration-with-teo-2-480.webp 480w, 
-                    img/webp/abstract-collaboration-with-teo-2-768.webp 768w, 
-                    img/webp/abstract-collaboration-with-teo-2-1024.webp 1024w, 
-                    img/webp/abstract-collaboration-with-teo-2-1536.webp 1536w
+                    img/webp/collaboration-with-teo-2-300.webp 300w, 
+                    img/webp/collaboration-with-teo-2-480.webp 480w, 
+                    img/webp/collaboration-with-teo-2-768.webp 768w, 
+                    img/webp/collaboration-with-teo-2-1024.webp 1024w, 
+                    img/webp/collaboration-with-teo-2-1536.webp 1536w
                   "
                   type="image/webp"
                   sizes="(max-width: 540px) 100vw, 
@@ -542,18 +535,18 @@
                     33vw">
                 <source 
                   srcset="
-                    img/jpg/abstract-collaboration-with-teo-2-300.jpg 300w,
-                    img/jpg/abstract-collaboration-with-teo-2-480.jpg 480w,
-                    img/jpg/abstract-collaboration-with-teo-2-768.jpg 768w,
-                    img/jpg/abstract-collaboration-with-teo-2-1024.jpg 1024w,
-                    img/jpg/abstract-collaboration-with-teo-2-1536.jpg 1536w
+                    img/jpg/collaboration-with-teo-2-300.jpg 300w,
+                    img/jpg/collaboration-with-teo-2-480.jpg 480w,
+                    img/jpg/collaboration-with-teo-2-768.jpg 768w,
+                    img/jpg/collaboration-with-teo-2-1024.jpg 1024w,
+                    img/jpg/collaboration-with-teo-2-1536.jpg 1536w
                   "
                   type="image/jpeg"
                   sizes="(max-width: 540px) 100vw, 
                     (max-width: 899px) 50vw, 
                     33vw">
                 <img 
-                  src="img/jpg/abstract-collaboration-with-teo-2-480.jpg" 
+                  src="img/jpg/collaboration-with-teo-2-480.jpg" 
                   alt="Collaboration with Teo #2"
                   loading="lazy">
               </picture>
@@ -562,15 +555,15 @@
           </div>
           
           <div class="landscape">
-            <a href="paintings/abstract-collaboration-with-teo-3/" data-full="img/abstract-collaboration-with-teo-3.png">
+            <a href="paintings/collaboration-with-teo-3/" data-full="img/collaboration-with-teo-3.png">
               <picture>
                 <source 
                   srcset="
-                    img/webp/abstract-collaboration-with-teo-3-300.webp 300w, 
-                    img/webp/abstract-collaboration-with-teo-3-480.webp 480w, 
-                    img/webp/abstract-collaboration-with-teo-3-768.webp 768w, 
-                    img/webp/abstract-collaboration-with-teo-3-1024.webp 1024w, 
-                    img/webp/abstract-collaboration-with-teo-3-1536.webp 1536w
+                    img/webp/collaboration-with-teo-3-300.webp 300w, 
+                    img/webp/collaboration-with-teo-3-480.webp 480w, 
+                    img/webp/collaboration-with-teo-3-768.webp 768w, 
+                    img/webp/collaboration-with-teo-3-1024.webp 1024w, 
+                    img/webp/collaboration-with-teo-3-1536.webp 1536w
                   "
                   type="image/webp"
                   sizes="(max-width: 540px) 100vw, 
@@ -578,18 +571,18 @@
                     33vw">
                 <source 
                   srcset="
-                    img/jpg/abstract-collaboration-with-teo-3-300.jpg 300w,
-                    img/jpg/abstract-collaboration-with-teo-3-480.jpg 480w, 
-                    img/jpg/abstract-collaboration-with-teo-3-768.jpg 768w, 
-                    img/jpg/abstract-collaboration-with-teo-3-1024.jpg 1024w, 
-                    img/jpg/abstract-collaboration-with-teo-3-1536.jpg 1536w
+                    img/jpg/collaboration-with-teo-3-300.jpg 300w,
+                    img/jpg/collaboration-with-teo-3-480.jpg 480w, 
+                    img/jpg/collaboration-with-teo-3-768.jpg 768w, 
+                    img/jpg/collaboration-with-teo-3-1024.jpg 1024w, 
+                    img/jpg/collaboration-with-teo-3-1536.jpg 1536w
                   "
                   type="image/jpeg"
                   sizes="(max-width: 540px) 100vw, 
                     (max-width: 899px) 50vw, 
                     33vw">
                 <img 
-                  src="img/jpg/abstract-collaboration-with-teo-3-480.jpg" 
+                  src="img/jpg/collaboration-with-teo-3-480.jpg" 
                   alt="Collaboration with Teo #3"
                   loading="lazy">
               </picture>
@@ -630,23 +623,23 @@
                     33vw">
                 <img 
                   src="img/jpg/seascape-2018-480.jpg" 
-                  alt="Seascape 2018"
+                  alt="Seascape, 2018"
                   loading="lazy">
               </picture>
             </a>
-            <p>Seascape 2018</p>
+            <p>Seascape, 2018</p>
           </div>
 
           <div class="landscape">
-            <a href="paintings/mont-sainte-victoire-a/" data-full="img/mont-sainte-victoire-a.png">
+            <a href="paintings/mont-sainte-victoire-after-cezanne/" data-full="img/mont-sainte-victoire-after-cezanne.png">
               <picture>
                 <source 
                   srcset="
-                    img/webp/mont-sainte-victoire-a-300.webp 300w, 
-                    img/webp/mont-sainte-victoire-a-480.webp 480w, 
-                    img/webp/mont-sainte-victoire-a-768.webp 768w, 
-                    img/webp/mont-sainte-victoire-a-1024.webp 1024w, 
-                    img/webp/mont-sainte-victoire-a-1536.webp 1536w
+                    img/webp/mont-sainte-victoire-after-cezanne-300.webp 300w, 
+                    img/webp/mont-sainte-victoire-after-cezanne-480.webp 480w, 
+                    img/webp/mont-sainte-victoire-after-cezanne-768.webp 768w, 
+                    img/webp/mont-sainte-victoire-after-cezanne-1024.webp 1024w, 
+                    img/webp/mont-sainte-victoire-after-cezanne-1536.webp 1536w
                   "
                   type="image/webp"
                   sizes="(max-width: 540px) 100vw, 
@@ -654,18 +647,18 @@
                     33vw">
                 <source 
                   srcset="
-                    img/jpg/mont-sainte-victoire-a-300.jpg 300w,
-                    img/jpg/mont-sainte-victoire-a-480.jpg 480w,
-                    img/jpg/mont-sainte-victoire-a-768.jpg 768w,
-                    img/jpg/mont-sainte-victoire-a-1024.jpg 1024w,
-                    img/jpg/mont-sainte-victoire-a-1536.jpg 1536w
+                    img/jpg/mont-sainte-victoire-after-cezanne-300.jpg 300w,
+                    img/jpg/mont-sainte-victoire-after-cezanne-480.jpg 480w,
+                    img/jpg/mont-sainte-victoire-after-cezanne-768.jpg 768w,
+                    img/jpg/mont-sainte-victoire-after-cezanne-1024.jpg 1024w,
+                    img/jpg/mont-sainte-victoire-after-cezanne-1536.jpg 1536w
                   "
                   type="image/jpeg"
                   sizes="(max-width: 540px) 100vw, 
                     (max-width: 899px) 50vw, 
                     33vw">
                 <img 
-                  src="img/jpg/mont-sainte-victoire-a-480.jpg" 
+                  src="img/jpg/mont-sainte-victoire-after-cezanne-480.jpg" 
                   alt="Mont Sainte&#8209;Victoire, after Cézanne"
                   loading="lazy">
               </picture>
@@ -674,14 +667,14 @@
           </div>
           
           <div class="portrait">
-            <a href="paintings/granada-cjon-de-las-tomasas/" data-full="img/granada-cjon-de-las-tomasas.png">
+            <a href="paintings/cjon-de-las-tomasas-albaicin-granada/" data-full="img/cjon-de-las-tomasas-albaicin-granada.png">
               <picture>
                 <source 
                   srcset="
-                    img/webp/granada-cjon-de-las-tomasas-300.webp 300w,
-                    img/webp/granada-cjon-de-las-tomasas-480.webp 480w,
-                    img/webp/granada-cjon-de-las-tomasas-768.webp 768w,
-                    img/webp/granada-cjon-de-las-tomasas-1024.webp 1024w
+                    img/webp/cjon-de-las-tomasas-albaicin-granada-300.webp 300w,
+                    img/webp/cjon-de-las-tomasas-albaicin-granada-480.webp 480w,
+                    img/webp/cjon-de-las-tomasas-albaicin-granada-768.webp 768w,
+                    img/webp/cjon-de-las-tomasas-albaicin-granada-1024.webp 1024w
                   "
                   type="image/webp"
                   sizes="(max-width: 540px) 100vw, 
@@ -689,17 +682,17 @@
                     33vw">
                 <source 
                   srcset="
-                    img/jpg/granada-cjon-de-las-tomasas-300.jpg 300w,
-                    img/jpg/granada-cjon-de-las-tomasas-480.jpg 480w,
-                    img/jpg/granada-cjon-de-las-tomasas-768.jpg 768w,
-                    img/jpg/granada-cjon-de-las-tomasas-1024.jpg 1024w
+                    img/jpg/cjon-de-las-tomasas-albaicin-granada-300.jpg 300w,
+                    img/jpg/cjon-de-las-tomasas-albaicin-granada-480.jpg 480w,
+                    img/jpg/cjon-de-las-tomasas-albaicin-granada-768.jpg 768w,
+                    img/jpg/cjon-de-las-tomasas-albaicin-granada-1024.jpg 1024w
                   "
                   type="image/jpeg"
                   sizes="(max-width: 540px) 100vw, 
                     (max-width: 899px) 50vw, 
                     33vw">
                 <img 
-                  src="img/jpg/granada-cjon-de-las-tomasas-480.jpg" 
+                  src="img/jpg/cjon-de-las-tomasas-albaicin-granada-480.jpg" 
                   alt="Cjón. de las Tomasas, Albaicín, Granada"
                   loading="lazy">
               </picture>
@@ -708,14 +701,14 @@
           </div>
           
           <div class="portrait">
-            <a href="paintings/milan-ponte-alda-merini/" data-full="img/milan-ponte-alda-merini.png">
+            <a href="paintings/ponte-alda-merini-milan/" data-full="img/ponte-alda-merini-milan.png">
               <picture>
                 <source 
                   srcset="
-                    img/webp/milan-ponte-alda-merini-300.webp 300w, 
-                    img/webp/milan-ponte-alda-merini-480.webp 480w, 
-                    img/webp/milan-ponte-alda-merini-768.webp 768w, 
-                    img/webp/milan-ponte-alda-merini-1024.webp 1024w
+                    img/webp/ponte-alda-merini-milan-300.webp 300w, 
+                    img/webp/ponte-alda-merini-milan-480.webp 480w, 
+                    img/webp/ponte-alda-merini-milan-768.webp 768w, 
+                    img/webp/ponte-alda-merini-milan-1024.webp 1024w
                   "
                   type="image/webp"
                   sizes="(max-width: 540px) 100vw, 
@@ -723,17 +716,17 @@
                     33vw">
                 <source 
                   srcset="
-                    img/jpg/milan-ponte-alda-merini-300.jpg 300w,
-                    img/jpg/milan-ponte-alda-merini-480.jpg 480w,
-                    img/jpg/milan-ponte-alda-merini-768.jpg 768w,
-                    img/jpg/milan-ponte-alda-merini-1024.jpg 1024w
+                    img/jpg/ponte-alda-merini-milan-300.jpg 300w,
+                    img/jpg/ponte-alda-merini-milan-480.jpg 480w,
+                    img/jpg/ponte-alda-merini-milan-768.jpg 768w,
+                    img/jpg/ponte-alda-merini-milan-1024.jpg 1024w
                   "
                   type="image/jpeg"
                   sizes="(max-width: 540px) 100vw, 
                     (max-width: 899px) 50vw, 
                     33vw">
                 <img 
-                  src="img/jpg/milan-ponte-alda-merini-480.jpg" 
+                  src="img/jpg/ponte-alda-merini-milan-480.jpg" 
                   alt="Ponte Alda Merini, Milan"
                   loading="lazy">
               </picture>
@@ -742,14 +735,14 @@
           </div>
 
           <div class="portrait">
-            <a href="paintings/brussels-nighttime-street/" data-full="img/brussels-nighttime-street.png">
+            <a href="paintings/nighttime-brussels-2013/" data-full="img/nighttime-brussels-2013.png">
               <picture>
                 <source 
                   srcset="
-                    img/webp/brussels-nighttime-street-300.webp 300w, 
-                    img/webp/brussels-nighttime-street-480.webp 480w, 
-                    img/webp/brussels-nighttime-street-768.webp 768w, 
-                    img/webp/brussels-nighttime-street-1024.webp 1024w
+                    img/webp/nighttime-brussels-2013-300.webp 300w, 
+                    img/webp/nighttime-brussels-2013-480.webp 480w, 
+                    img/webp/nighttime-brussels-2013-768.webp 768w, 
+                    img/webp/nighttime-brussels-2013-1024.webp 1024w
                   "
                   type="image/webp"
                   sizes="(max-width: 540px) 100vw, 
@@ -757,17 +750,17 @@
                     33vw">
                 <source 
                   srcset="
-                    img/jpg/brussels-nighttime-street-300.jpg 300w,
-                    img/jpg/brussels-nighttime-street-480.jpg 480w,
-                    img/jpg/brussels-nighttime-street-768.jpg 768w,
-                    img/jpg/brussels-nighttime-street-1024.jpg 1024w
+                    img/jpg/nighttime-brussels-2013-300.jpg 300w,
+                    img/jpg/nighttime-brussels-2013-480.jpg 480w,
+                    img/jpg/nighttime-brussels-2013-768.jpg 768w,
+                    img/jpg/nighttime-brussels-2013-1024.jpg 1024w
                   "
                   type="image/jpeg"
                   sizes="(max-width: 540px) 100vw, 
                     (max-width: 899px) 50vw, 
                     33vw">
                 <img 
-                  src="img/jpg/brussels-nighttime-street-480.jpg" 
+                  src="img/jpg/nighttime-brussels-2013-480.jpg" 
                   alt="Nighttime, Brussels, 2013"
                   loading="lazy">
               </picture>
@@ -776,15 +769,15 @@
           </div>
 
           <div class="landscape">
-            <a href="paintings/porthmadog/" data-full="img/porthmadog.png">
+            <a href="paintings/porthmadog-wales/" data-full="img/porthmadog-wales.png">
               <picture>
                 <source 
                   srcset="
-                    img/webp/porthmadog-300.webp 300w,
-                    img/webp/porthmadog-480.webp 480w,
-                    img/webp/porthmadog-768.webp 768w,
-                    img/webp/porthmadog-1024.webp 1024w,
-                    img/webp/porthmadog-1536.webp 1536w
+                    img/webp/porthmadog-wales-300.webp 300w,
+                    img/webp/porthmadog-wales-480.webp 480w,
+                    img/webp/porthmadog-wales-768.webp 768w,
+                    img/webp/porthmadog-wales-1024.webp 1024w,
+                    img/webp/porthmadog-wales-1536.webp 1536w
                   "
                   type="image/webp"
                   sizes="(max-width: 540px) 100vw, 
@@ -792,18 +785,18 @@
                     33vw">
                 <source 
                   srcset="
-                    img/jpg/porthmadog-300.jpg 300w,
-                    img/jpg/porthmadog-480.jpg 480w,
-                    img/jpg/porthmadog-768.jpg 768w,
-                    img/jpg/porthmadog-1024.jpg 1024w,
-                    img/jpg/porthmadog-1536.jpg 1536w
+                    img/jpg/porthmadog-wales-300.jpg 300w,
+                    img/jpg/porthmadog-wales-480.jpg 480w,
+                    img/jpg/porthmadog-wales-768.jpg 768w,
+                    img/jpg/porthmadog-wales-1024.jpg 1024w,
+                    img/jpg/porthmadog-wales-1536.jpg 1536w
                   "
                   type="image/jpeg"
                   sizes="(max-width: 540px) 100vw, 
                     (max-width: 899px) 50vw, 
                     33vw">
                 <img 
-                  src="img/jpg/porthmadog-480.jpg" 
+                  src="img/jpg/porthmadog-wales-480.jpg" 
                   alt="Porthmadog, Wales"
                   loading="lazy">
               </picture>
@@ -893,44 +886,11 @@
   </main>
 
   <footer id="contact" class="site-footer">
+    <p class="footer-email" id="footer-email"></p>
+    <script>(function(){var p=['chrisjones.org.uk', '@', 'hello'];document.getElementById("footer-email").textContent=p.reverse().join("");})();</script>
     <p><a href="https://www.instagram.com/only1jones2/" aria-label="Instagram: only1jones2" title="Instagram"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.3" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.6" r="1.2" fill="currentColor"/></svg></a></p>
     <p>&copy;2026 Christopher Jones</p>
   </footer>
-
-    <!-- make_pages.py extras: start (rebuilt on every run; edit the script, not this block) -->
-    <script>
-      /* Show the logo already finished (when html.logo-still is set): jump any
-        SVG (SMIL) animation to its end and finish any CSS animation. */
-      (function () {
-        var root = document.documentElement;
-        if (!root.classList.contains('logo-still')) return;
-        var obj = document.querySelector('.header object');
-        function reveal() { root.classList.add('logo-ready'); }
-        if (!obj) return reveal();
-        function finish() {
-          try {
-            var doc = obj.contentDocument, svg = doc && doc.documentElement;
-            if (svg) {
-              if (svg.pauseAnimations) { svg.pauseAnimations(); svg.setCurrentTime(3600); }
-              var st = doc.createElementNS('http://www.w3.org/2000/svg', 'style');
-              st.textContent = '*{animation-delay:-3600s!important;' +
-                'animation-play-state:paused!important;transition:none!important}';
-              svg.appendChild(st);
-            }
-          } catch (e) {}
-          reveal();
-        }
-        /* Act only once the real logo file has loaded, not the blank
-          placeholder document the browser shows before it. */
-        var d = null;
-        try { d = obj.contentDocument; } catch (e) {}
-        if (d && d.readyState === 'complete' && d.documentElement &&
-            d.documentElement.localName === 'svg') finish();
-        else obj.addEventListener('load', finish);
-        setTimeout(reveal, 1500);   /* never leave the logo hidden */
-      })();
-    </script>
-  <!-- make_pages.py extras: end -->
       
   <script type="module" src="face/face.js"></script>
   <script src="header.js"></script>
