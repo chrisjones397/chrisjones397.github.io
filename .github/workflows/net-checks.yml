@@ -1,0 +1,21 @@
+name: Network checks
+on:
+  push:
+    branches: [net-checks]
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get install -y -qq dnsutils whois >/dev/null
+      - name: Checks
+        run: |
+          date -u
+          for d in malzeardroadmedicalcentre.nhs.uk ivelmedicalcentre.co.uk; do
+            echo "===== $d"
+            echo "-- NS";  dig NS $d +short
+            echo "-- A";   dig $d +short
+            echo "-- MX";  dig MX $d +short
+            echo "-- CNAME www"; dig CNAME www.$d +short
+            echo "-- HTTP"; curl -sI -m 15 https://$d | head -5 || true
+          done
